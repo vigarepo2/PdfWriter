@@ -1,5 +1,5 @@
 name = "pdfwriter"
-main = "src/worker.js"
+main = "dist/server.js"
 compatibility_date = "2026-05-19"
 workers_dev = true
 
