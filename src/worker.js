@@ -6,8 +6,8 @@ const HTML = `<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b3d91">
-  <title>PdfWriter</title>
+  <meta name="theme-color" content="#0b2f66">
+  <title>PdfWriter · Exemption Application Portal</title>
   <link rel="stylesheet" href="/style.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -15,35 +15,53 @@ const HTML = `<!doctype html>
 </head>
 <body class="view-editor">
   <header class="app-header">
+    <div class="gov-strip"></div>
+    <div class="top-line">
+      <div>Legal Document Preparation Portal</div>
+      <div class="right"><span>Draft</span><span>Preview</span><span>Export</span></div>
+    </div>
     <div class="brand-row">
-      <div class="emblem">PW</div>
-      <div>
-        <div class="brand-title">PdfWriter</div>
-        <div class="brand-subtitle">Exemption Application</div>
+      <div class="brand-left">
+        <div class="emblem">PW</div>
+        <div>
+          <div class="brand-title">PdfWriter</div>
+          <div class="brand-subtitle">Court Application Drafting Service</div>
+        </div>
       </div>
+      <div class="service-chip">Exemption Application</div>
     </div>
-    <div class="mobile-tabs">
-      <button id="tabEditor" class="active">Editor</button>
-      <button id="tabPreview">Preview</button>
-    </div>
+    <nav class="service-nav" aria-label="Application navigation">
+      <button id="tabEditor" class="active">1. Editor</button>
+      <button id="tabPreview">2. Preview</button>
+      <button id="previewPdf">3. Export PDF</button>
+    </nav>
   </header>
 
   <main class="shell">
+    <aside class="desk-rail" aria-label="Quick navigation">
+      <div class="rail-item active">E</div>
+      <div class="rail-item">P</div>
+      <div class="rail-item">T</div>
+      <div class="rail-item">PDF</div>
+    </aside>
+
     <section id="editorPanel" class="panel editor-panel">
       <div class="desktop-brand">
         <div class="brand-row">
-          <div class="emblem">PW</div>
-          <div>
-            <div class="brand-title">PdfWriter</div>
-            <div class="brand-subtitle">Professional Legal Drafting</div>
+          <div class="brand-left">
+            <div class="emblem">PW</div>
+            <div>
+              <div class="brand-title">Draft Details</div>
+              <div class="brand-subtitle">Fill only what is needed</div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="section">
         <div class="section-title">
-          <h2>Court and Case Title</h2>
-          <button id="optionsButton" class="btn secondary">Options</button>
+          <h2 data-step="1">Court and Case Title</h2>
+          <button id="optionsButton" class="btn secondary">Template Options</button>
         </div>
         <label>Court name</label>
         <select id="court" class="field">
@@ -60,11 +78,12 @@ const HTML = `<!doctype html>
           <div><label>Case title left</label><input id="caseLeft" class="field" placeholder="State / Complainant"></div>
           <div><label>Case title right</label><input id="caseRight" class="field" placeholder="Accused / Respondent"></div>
         </div>
+        <div class="help-card">Beginner tip: the case title can be different from the accused whose appearance is being exempted.</div>
       </div>
 
       <div id="templateTools" class="section hidden">
-        <div class="section-title"><h2>Template Tools</h2><span>.pwt.json</span></div>
-        <p class="hint">Saves all form fields, clauses, accused rows, duty status, and manual preview edits.</p>
+        <div class="section-title"><h2 data-step="T">Template Tools</h2><span>.pwt.json</span></div>
+        <p class="hint">Save all fields, clauses, accused rows, duty status, and manual preview edits.</p>
         <div class="wrap-actions">
           <button id="exportTemplate" class="btn secondary">Export Template</button>
           <button id="importTemplate" class="btn secondary">Import Template</button>
@@ -75,7 +94,7 @@ const HTML = `<!doctype html>
       </div>
 
       <div class="section">
-        <div class="section-title"><h2>FIR Details</h2><span>Optional</span></div>
+        <div class="section-title"><h2 data-step="2">FIR Details</h2><span>Optional</span></div>
         <div class="grid two">
           <div><label>FIR number</label><input id="fir" class="field" placeholder="FIR No."></div>
           <div><label>FIR date</label><input id="firDate" class="field" placeholder="DD.MM.YYYY"></div>
@@ -85,23 +104,23 @@ const HTML = `<!doctype html>
       </div>
 
       <div class="section">
-        <div class="section-title"><h2>Absent Accused / Applicants</h2><button id="addPerson" class="btn secondary">Add Person</button></div>
+        <div class="section-title"><h2 data-step="3">Absent Accused / Applicants</h2><button id="addPerson" class="btn secondary">Add Person</button></div>
         <div id="peopleBox" class="stack"></div>
       </div>
 
       <div class="section">
-        <div class="section-title"><h2>Application Text</h2><button id="resetText" class="btn secondary">Reset Text</button></div>
+        <div class="section-title"><h2 data-step="4">Application Text</h2><button id="resetText" class="btn secondary">Reset Text</button></div>
         <label>Subject</label><textarea id="subject" class="field area"></textarea>
         <label>Prayer</label><textarea id="prayer" class="field area"></textarea>
       </div>
 
       <div class="section">
-        <div class="section-title"><h2>Factual Statements</h2><button id="addClause" class="btn secondary">Add Clause</button></div>
+        <div class="section-title"><h2 data-step="5">Factual Statements</h2><button id="addClause" class="btn secondary">Add Clause</button></div>
         <div id="clauseBox" class="stack"></div>
       </div>
 
       <div class="section">
-        <div class="section-title"><h2>Filing and Counsel</h2></div>
+        <div class="section-title"><h2 data-step="6">Filing and Counsel</h2></div>
         <div class="grid two">
           <div><label>Place</label><input id="place" class="field" placeholder="Place"></div>
           <div><label>Date</label><input id="date" class="field" placeholder="DD.MM.YYYY"></div>
@@ -127,12 +146,11 @@ const HTML = `<!doctype html>
 
     <section id="previewPanel" class="panel preview-panel">
       <div class="preview-top">
-        <div><strong>Legal-size Preview</strong><span id="statusText">Ready</span></div>
+        <div class="preview-title"><strong>Legal-size Preview</strong><span id="statusText">Ready</span></div>
         <div class="preview-actions">
           <button id="fitZoom" class="btn secondary">Fit</button>
           <button id="zoomOut" class="btn secondary">−</button>
           <button id="zoomIn" class="btn secondary">+</button>
-          <button id="previewPdf" class="btn primary">PDF</button>
         </div>
       </div>
 
@@ -168,8 +186,8 @@ const HTML = `<!doctype html>
         <button id="signatureLine" class="tool">Sign Line</button>
       </div>
 
-      <div class="section">
-        <div class="section-title"><h2>Markdown / Find Replace</h2><span>Advanced tools</span></div>
+      <div class="section advanced-panel">
+        <div class="section-title"><h2 data-step="A">Markdown / Find Replace</h2><span>Professional tools</span></div>
         <textarea id="markdownText" class="field area" placeholder="Markdown: **bold**, *italic*, new paragraphs..."></textarea>
         <div class="wrap-actions" style="margin-top:8px">
           <button id="applyMarkdown" class="btn secondary">Insert Markdown</button>
@@ -204,7 +222,7 @@ function textResponse(body, type) {
 export default {
   async fetch(request) {
     const url = new URL(request.url);
-    if (url.pathname === '/health') return Response.json({ ok: true, app: 'PdfWriter', version: '3.5.0' });
+    if (url.pathname === '/health') return Response.json({ ok: true, app: 'PdfWriter', version: '20.0.0' });
     if (url.pathname === '/style.css') return textResponse(CSS, 'text/css; charset=utf-8');
     if (url.pathname === '/app.js') return textResponse(CLIENT_JS, 'application/javascript; charset=utf-8');
     if (url.pathname === '/') return textResponse(HTML, 'text/html; charset=utf-8');
