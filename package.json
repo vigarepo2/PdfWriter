@@ -1,7 +1,7 @@
 {
   "name": "pdfwriter",
-  "version": "1.0.0",
-  "description": "Minimal legal exemption application PDF generator with real text PDF and scanned PDF export.",
+  "version": "2.1.0",
+  "description": "Minimal exemption application PDF generator with real text and scanned PDF export.",
   "private": true,
   "type": "module",
   "scripts": {
