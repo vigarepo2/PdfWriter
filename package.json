@@ -1,7 +1,7 @@
 {
   "name": "pdfwriter",
-  "version": "3.4.0",
-  "description": "Mobile-first Cloudflare Worker for professional exemption application PDF drafting with exact preview-to-PDF export and stable separated assets.",
+  "version": "3.5.0",
+  "description": "Mobile-first Cloudflare Worker for professional exemption application PDF drafting with advanced editor tools and split stable assets.",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,5 +15,5 @@
   "engines": {
     "node": ">=18"
   },
-  "keywords": ["pdf", "cloudflare-worker", "legal-document", "jspdf", "html2canvas", "court-application", "mobile-first", "preview-editor"]
+  "keywords": ["pdf", "cloudflare-worker", "legal-document", "jspdf", "html2canvas", "court-application", "mobile-first", "preview-editor", "rich-editor"]
 }
