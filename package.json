@@ -1,7 +1,7 @@
 {
   "name": "pdfwriter",
-  "version": "3.1.0",
-  "description": "A mobile-first Cloudflare Worker app for generating professional legal application PDFs with separate case title and applicant/accused handling.",
+  "version": "3.2.0",
+  "description": "Mobile-first Cloudflare Worker for professional exemption application PDF drafting with template import and export.",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,12 +15,5 @@
   "engines": {
     "node": ">=18"
   },
-  "keywords": [
-    "pdf",
-    "cloudflare-worker",
-    "legal-document",
-    "jspdf",
-    "court-application",
-    "mobile-first"
-  ]
+  "keywords": ["pdf", "cloudflare-worker", "legal-document", "jspdf", "court-application", "mobile-first", "template-export"]
 }
