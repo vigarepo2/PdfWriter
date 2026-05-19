@@ -6,205 +6,444 @@ export default {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LADC Exemption Application Generator</title>
+    <title>LADC Fazilka - Universal Court Application Engine</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Montserrat', sans-serif; background: linear-gradient(135deg, #1e293b, #0f172a); color: #f8fafc; min-height: 100vh; }
-        .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a, #020617);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .form-input {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            color: #ffffff;
+            border-radius: 0.5rem;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .form-input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
         
-        /* Document Preview Styles */
-        #document-preview { background: white; color: black; font-family: 'Calibri', Arial, sans-serif; width: 100%; max-width: 8.5in; margin: 0 auto; padding: 1in; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); border-radius: 4px; font-size: 14pt; line-height: 1.8; text-align: justify; }
-        .doc-header { text-align: center; font-weight: bold; font-size: 15pt; text-transform: uppercase; margin-bottom: 40px; }
-        .doc-parties { display: flex; justify-content: space-between; margin-bottom: 30px; font-weight: bold; }
-        .doc-vs { text-align: center; font-weight: bold; margin: 0 20px; }
-        .doc-fir-details { margin-left: auto; width: 50%; text-align: left; margin-bottom: 40px; font-weight: bold; line-height: 1.5; }
-        .doc-title { font-weight: bold; text-align: justify; margin-bottom: 30px; text-decoration: underline; text-underline-offset: 4px;}
-        .doc-salutation { margin-bottom: 20px; }
-        .doc-list { margin-top: 15px; margin-bottom: 30px; padding-left: 20px; list-style-type: none;}
-        .doc-list li { margin-bottom: 15px; text-indent: -20px;}
-        .doc-prayer { text-indent: 50px; margin-bottom: 50px; line-height: 1.8; }
-        .doc-footer { display: flex; justify-content: space-between; margin-top: 40px; }
-        .doc-signatures { text-align: right; line-height: 1.5; }
-        .doc-counsel { margin-top: 60px; text-align: center; width: 50%; margin-left: auto; line-height: 1.5; }
-        
-        /* Hide scrollbar for aesthetics but allow scrolling */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        /* Interactive Screen Preview Container (Responsive Visual Mockup) */
+        #preview-container {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Times New Roman', Times, serif;
+            width: 100%;
+            aspect-ratio: 8.5 / 14;
+            padding: 1.2in 1in 1in 1.4in;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+            font-size: 13pt;
+            line-height: 1.7;
+        }
+
+        /* ----------------------------------------------------
+           CRITICAL FIX: Isolated PDF Target Sandbox Engine
+           This is forced to a constant 816px (8.5in at 96 DPI)
+           with absolute layout parameters to bypass viewport skewing.
+        ---------------------------------------------------- */
+        #pdf-render-sandbox {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 816px; 
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 13pt;
+            line-height: 1.8;
+            padding: 1.2in 1in 1in 1.4in; /* High-grade judicial left margin spacing */
+            box-sizing: border-box;
+            text-align: justify;
+        }
+
+        /* Court Layout Topographies */
+        .court-header-print {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14pt;
+            text-transform: uppercase;
+            margin-bottom: 35px;
+            line-height: 1.5;
+        }
+        .parties-wrapper {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            margin-bottom: 25px;
+            font-weight: bold;
+            align-items: center;
+        }
+        .case-meta-block {
+            margin-left: auto;
+            width: 55%;
+            font-weight: bold;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            border-left: 2px solid #000000;
+            padding-left: 15px;
+        }
+        .document-subject {
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-align: justify;
+            line-height: 1.5;
+            text-transform: uppercase;
+            border-bottom: 1.5px solid #000;
+            padding-bottom: 6px;
+        }
+        .paragraph-list {
+            margin-bottom: 35px;
+            list-style-type: none;
+            padding: 0;
+        }
+        .paragraph-list li {
+            margin-bottom: 18px;
+            text-indent: 0px;
+            padding-left: 0px;
+            text-align: justify;
+        }
+        .prayer-block {
+            margin-bottom: 45px;
+            text-indent: 40px;
+            text-align: justify;
+        }
+        .footer-signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 20px;
+            align-items: end;
+        }
+        .counsel-stamp {
+            margin-top: 40px;
+            margin-left: auto;
+            width: 55%;
+            text-align: left;
+            line-height: 1.4;
+        }
     </style>
 </head>
-<body class="p-4 md:p-8 flex flex-col lg:flex-row gap-8">
+<body class="p-4 lg:p-8 flex flex-col xl:flex-row gap-8">
 
-    <div class="glass-panel p-6 w-full lg:w-1/3 flex flex-col gap-5 h-fit sticky top-8">
-        <h2 class="text-2xl font-bold tracking-wide text-white mb-2">Exemption Generator</h2>
-        
-        <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-300 font-medium">Select Court</label>
-            <select id="courtName" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                <option value="IN THE COURT OF SH. DHARMINDER PAUL SINGLA, SESSIONS JUDGE, FAZILKA">Sh. Dharminder Paul Singla, Sessions Judge</option>
-                <option value="IN THE COURT OF SH. KRISHAN KUMAR SINGLA, ASJ, FAZILKA">Sh. Krishan Kumar Singla, ASJ</option>
-                <option value="IN THE COURT OF MRS. PAMELPREET GREWAL KAHAL, JUDGE, SPECIAL COURT, FAZILKA" selected>Mrs. Pamelpreet Grewal Kahal, Special Court</option>
-                <option value="IN THE COURT OF SH. AJIT PAL SINGH, ASJ, FAZILKA">Sh. Ajit Pal Singh, ASJ</option>
-                <option value="IN THE COURT OF SH. HARPREET SINGH, JMIC, FAZILKA">Sh. Harpreet Singh, JMIC</option>
-                <option value="IN THE COURT OF MS. KARAMWINDER KAUR, JMIC, FAZILKA">Ms. Karamwinder Kaur, JMIC</option>
-                <option value="IN THE COURT OF MS. RAVLEEN KAUR, JMIC, FAZILKA">Ms. Ravleen Kaur, JMIC</option>
+    <div class="glass-card rounded-2xl p-6 w-full xl:w-[32%] flex flex-col gap-5 h-fit xl:sticky xl:top-8 max-h-[92vh] overflow-y-auto">
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                <span class="bg-blue-600 w-2.5 h-6 rounded-full inline-block"></span>
+                LADC Application Engine
+            </h1>
+            <p class="text-xs text-gray-400 mt-1">Fazilka Jurisdiction Production Platform</p>
+        </div>
+
+        <hr class="border-slate-800" />
+
+        <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Application Template Preset</label>
+            <select id="templatePreset" onchange="loadPresetTemplate()" class="form-input bg-slate-900 border-slate-700 text-blue-400 font-medium">
+                <option value="exemption">Application for Exemption of Personal Appearance</option>
+                <option value="bail_modification">Application for Bail Bond Modification</option>
+                <option value="blank">Custom Universal Blank Application</option>
             </select>
         </div>
 
-        <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-300 font-medium">Accused Name (e.g., Sandeep Singh @ Budhu)</label>
-            <input type="text" id="accusedName" value="Sandeep Singh @ Budhu" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-            <div class="flex flex-col gap-1">
-                <label class="text-sm text-gray-300 font-medium">FIR No.</label>
-                <input type="text" id="firNo" value="06" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-            <div class="flex flex-col gap-1">
-                <label class="text-sm text-gray-300 font-medium">FIR Date</label>
-                <input type="text" id="firDate" value="13.01.2026" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-        </div>
-
-        <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-300 font-medium">Under Section (U/s)</label>
-            <input type="text" id="usSection" value="21, 27 NDPS Act" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
-
-        <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-300 font-medium">Police Station (PS)</label>
-            <input type="text" id="psName" value="Amir Khas" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
-
-        <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-300 font-medium">Application Date</label>
-            <input type="text" id="appDate" value="09.04.2026" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
-
-        <div class="flex flex-col gap-1">
-            <label class="text-sm text-gray-300 font-medium">Through Counsel</label>
-            <select id="counselDetails" class="w-full bg-slate-800/50 border border-slate-600 rounded-lg p-2.5 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
-                <option value="Baltej Singh Brar, Advocate|Chief, LADC, Fazilka.">Baltej Singh Brar (Chief)</option>
-                <option value="Hardeep Singh Dhaliwal, Advocate|Deputy Chief, LADC, Fazilka." selected>Hardeep Singh Dhaliwal (Deputy Chief)</option>
-                <option value="Sunil Rangbulla, Advocate|Deputy Chief, LADC, Fazilka.">Sunil Rangbulla (Deputy Chief)</option>
-                <option value="Rajvinder Kaur, Advocate|Assistant, LADC, Fazilka.">Rajvinder Kaur (Assistant)</option>
-                <option value="Amisha, Advocate|Assistant, LADC, Fazilka.">Amisha (Assistant)</option>
-                <option value="Naazpreet Kaur, Advocate|Assistant, LADC, Fazilka.">Naazpreet Kaur (Assistant)</option>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Judicial Bench / Court</label>
+            <select id="courtSelect" class="form-input">
+                <option value="IN THE COURT OF SH. DHARMINDER PAUL SINGLA, SESSIONS JUDGE, FAZILKA.">Sh. Dharminder Paul Singla, Sessions Judge</option>
+                <option value="IN THE COURT OF SH. KRISHAN KUMAR SINGLA, ASJ, FAZILKA.">Sh. Krishan Kumar Singla, ASJ</option>
+                <option value="IN THE COURT OF MRS. PAMELPREET GREWAL KAHAL, JUDGE, SPECIAL COURT, FAZILKA." selected>Mrs. Pamelpreet Grewal Kahal, Special Court</option>
+                <option value="IN THE COURT OF SH. AJIT PAL SINGH, ASJ, FAZILKA.">Sh. Ajit Pal Singh, ASJ</option>
+                <option value="IN THE COURT OF SH. HARPREET SINGH, JMIC, FAZILKA.">Sh. Harpreet Singh, JMIC</option>
+                <option value="IN THE COURT OF MS. KARAMWINDER KAUR, JMIC, FAZILKA.">Ms. Karamwinder Kaur, JMIC</option>
+                <option value="IN THE COURT OF MS. RAVLEEN KAUR, JMIC, FAZILKA.">Ms. Ravleen Kaur, JMIC</option>
             </select>
         </div>
 
-        <button onclick="generatePDF()" class="mt-4 w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-blue-500/50 transition-all duration-300 flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            Generate PDF
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">First Party (Complainant)</label>
+                <input type="text" id="partyOne" value="State" class="form-input">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">Second Party (Accused)</label>
+                <input type="text" id="partyTwo" value="Sandeep Singh @ Budhu" class="form-input">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">FIR Number</label>
+                <input type="text" id="firNumber" value="06" class="form-input">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">FIR Dated</label>
+                <input type="text" id="firDate" value="13.01.2026" class="form-input">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">Under Section (U/s)</label>
+                <input type="text" id="lawSections" value="21, 27 NDPS Act" class="form-input">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">Police Station (PS)</label>
+                <input type="text" id="policeStation" value="Amir Khas" class="form-input">
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Application Subject Heading</label>
+            <textarea id="appSubject" rows="3" class="form-input resize-none leading-relaxed"></textarea>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+                <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Statement Content Clauses</label>
+                <button onclick="addParagraphClause('')" class="text-xs bg-slate-800 hover:bg-slate-700 text-blue-400 px-2.5 py-1 rounded border border-slate-700 transition">
+                    + Add Clause
+                </button>
+            </div>
+            <div id="dynamicClausesBox" class="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
+                </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Prayer / Relief Requested</label>
+            <textarea id="prayerText" rows="2" class="form-input resize-none leading-relaxed"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">Filing Place</label>
+                <input type="text" id="filingPlace" value="Fazilka" class="form-input">
+            </div>
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-gray-400 font-medium">Filing Date</label>
+                <input type="text" id="filingDate" value="19-05-2026" class="form-input">
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold uppercase tracking-wider text-gray-400">Assign LADC Legal Advocate Counsel</label>
+            <select id="counselSelect" class="form-input">
+                <option value="Baltej Singh Brar, Advocate|Chief, LADC, Fazilka.">Baltej Singh Brar, Advocate (Chief)</option>
+                <option value="Hardeep Singh Dhaliwal, Advocate|Deputy Chief, LADC, Fazilka." selected>Hardeep Singh Dhaliwal, Advocate (Deputy Chief)</option>
+                <option value="Sunil Rangbulla, Advocate|Deputy Chief, LADC, Fazilka.">Sunil Rangbulla, Advocate (Deputy Chief)</option>
+                <option value="Rajvinder Kaur, Advocate|Assistant, LADC, Fazilka.">Rajvinder Kaur, Advocate (Assistant)</option>
+                <option value="Amisha, Advocate|Assistant, LADC, Fazilka.">Amisha, Advocate (Assistant)</option>
+                <option value="Naazpreet Kaur, Advocate|Assistant, LADC, Fazilka.">Naazpreet Kaur, Advocate (Assistant)</option>
+            </select>
+        </div>
+
+        <button onclick="compileAndDownloadPDF()" class="mt-2 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-900/40 hover:shadow-blue-500/30 transition-all duration-300 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Compile & Export Pristine PDF
         </button>
     </div>
 
-    <div class="w-full lg:w-2/3 overflow-x-auto pb-10">
-        <div id="document-preview">
-            <div class="doc-header" id="out-court">IN THE COURT OF MRS. PAMELPREET GREWAL KAHAL, JUDGE, SPECIAL COURT, FAZILKA</div>
-            
-            <div class="doc-parties">
-                <div>State</div>
-                <div class="doc-vs">v/s</div>
-                <div id="out-accused-top">Sandeep Singh @ Budhu.</div>
+    <div class="w-full xl:w-[68%] overflow-x-auto flex justify-center items-start bg-slate-950/40 rounded-2xl p-4 lg:p-8 border border-slate-900">
+        <div id="preview-container">
             </div>
-
-            <div class="doc-fir-details">
-                <div>FIR No. <span id="out-fir">06</span> dated <span id="out-fir-date">13.01.2026</span>,</div>
-                <div>U/s <span id="out-us">21, 27 NDPS Act</span>,</div>
-                <div>PS <span id="out-ps">Amir Khas</span>.</div>
-            </div>
-
-            <div class="doc-title">
-                Application for exemption of personal appearance of accused/applicant <span id="out-accused-title">Sandeep Singh @ Budhu</span>.
-            </div>
-
-            <div class="doc-salutation">Respected Sir,</div>
-            <div>It is submitted as follows:</div>
-
-            <ul class="doc-list">
-                <li>1) That the above noted case is pending before this Hon'ble court and same is fixed for today.</li>
-                <li>2) That the above noted case accused/applicant is unable to appear before this Hon'ble court due to illness. (A telephone message has been received)</li>
-                <li>3) That the absence of accused applicant is neither willful nor intentional but due to reason stated above.</li>
-            </ul>
-
-            <div class="doc-prayer">
-                It is therefore requested that in the lite of facts and circumstance mentioned above personal appearance of accused may kindly be exempted for today only.
-            </div>
-
-            <div class="doc-footer">
-                <div>
-                    <div>Place: Fazilka</div>
-                    <div>Date: <span id="out-app-date">09.04.2026</span>.</div>
-                </div>
-                <div class="doc-signatures">
-                    <div>Submitted By</div>
-                    <div id="out-accused-sign">Sandeep Singh @ Budhu</div>
-                    <div>(Accused/applicant)</div>
-                </div>
-            </div>
-
-            <div class="doc-counsel">
-                <div>Through Counsel</div>
-                <br><br><br>
-                <div id="out-counsel-name" style="font-weight: bold;">Hardeep Singh Dhaliwal, Advocate</div>
-                <div id="out-counsel-designation">Deputy Chief, LADC, Fazilka.</div>
-            </div>
-        </div>
     </div>
 
+    <div id="pdf-render-sandbox">
+        </div>
+
+
     <script>
-        // Live Preview Update Logic
-        const inputs = ['courtName', 'accusedName', 'firNo', 'firDate', 'usSection', 'psName', 'appDate', 'counselDetails'];
-        
-        inputs.forEach(id => {
-            document.getElementById(id).addEventListener('input', updatePreview);
-            document.getElementById(id).addEventListener('change', updatePreview);
+        // Data presets matrix configurations
+        const templates = {
+            exemption: {
+                subject: "Application for exemption of personal appearance of accused/applicant.",
+                paragraphs: [
+                    "That the above noted case is pending before this Hon'ble court and same is fixed for today.",
+                    "That the above noted case accused/applicant is unable to appear before this Hon'ble court due to illness. (A telephone message has been received)",
+                    "That the absence of accused applicant is neither willful nor intentional but due to reason stated above."
+                ],
+                prayer: "It is therefore requested that in the lite of facts and circumstance mentioned above personal appearance of accused may kindly be exempted for today only."
+            },
+            bail_modification: {
+                subject: "Application to put-up the file and to modify order dated 08-05-2026 to the extent of the sum of bail bonds of surety from Rs. 40,000/- to Rs. 30,000/- and also to direct the subordinate court to consider the earlier bail bonds.",
+                paragraphs: [
+                    "That the above-said criminal appeal is pending in this Hon'ble Court and is fixed for 27-07-2026.",
+                    "That an application for suspension of awarded sentence was filed along with the present appeal, which was decided by this Hon'ble Court with a direction to furnish bail bonds in the sum of Rs. 40,000/- each with one surety in the like amount each to the satisfaction of the learned trial court within 15 days from the date of order, i.e., 08-05-2026.",
+                    "That the applicants are residents of the above-said addresses which fall in the state of Uttar Pradesh, so the applicants are unable to arrange sureties of such amount in this area.",
+                    "That earlier the applicants had furnished their respective cash surety in the sum of Rs. 30,000/- under section 437-A Cr.P.C before the Ld. trial court as the applicants were unable to arrange sureties."
+                ],
+                prayer: "It is, therefore, requested that the sum of bail bonds of surety may kindly be modified from Rs. 40,000/- to Rs. 30,000/- and also to direct the subordinate court to consider the earlier bail bonds in the interest of justice."
+            },
+            blank: {
+                subject: "Application under section _____ for the purpose of __________________.",
+                paragraphs: [
+                    "That the above titled case is pending layout adjudication parameters before this Hon'ble court.",
+                    "That the context of the factual presentation is explicitly specified here."
+                ],
+                prayer: "It is therefore respectfully prayed that this application may kindly be allowed in the interest of absolute equity and justice."
+            }
+        };
+
+        // Initialize state engine
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPresetTemplate();
+            setupMutationHooks();
         });
 
-        function updatePreview() {
-            document.getElementById('out-court').innerText = document.getElementById('courtName').value;
+        function loadPresetTemplate() {
+            const key = document.getElementById('templatePreset').value;
+            const config = templates[key];
             
-            const accused = document.getElementById('accusedName').value;
-            document.getElementById('out-accused-top').innerText = accused + ".";
-            document.getElementById('out-accused-title').innerText = accused;
-            document.getElementById('out-accused-sign').innerText = accused;
+            document.getElementById('appSubject').value = config.subject;
+            document.getElementById('prayerText').value = config.prayer;
             
-            document.getElementById('out-fir').innerText = document.getElementById('firNo').value;
-            document.getElementById('out-fir-date').innerText = document.getElementById('firDate').value;
-            document.getElementById('out-us').innerText = document.getElementById('usSection').value;
-            document.getElementById('out-ps').innerText = document.getElementById('psName').value;
-            document.getElementById('out-app-date').innerText = document.getElementById('appDate').value;
-
-            const counsel = document.getElementById('counselDetails').value.split('|');
-            document.getElementById('out-counsel-name').innerText = counsel[0];
-            document.getElementById('out-counsel-designation').innerText = counsel[1];
+            const box = document.getElementById('dynamicClausesBox');
+            box.innerHTML = '';
+            config.paragraphs.forEach(text => addParagraphClause(text));
+            
+            renderStructuralLayouts();
         }
 
-        // PDF Generation via html2pdf
-        function generatePDF() {
-            const element = document.getElementById('document-preview');
-            const accusedName = document.getElementById('accusedName').value.replace(/[^a-zA-Z0-9]/g, '_');
-            const date = document.getElementById('appDate').value.replace(/\\./g, '-');
+        function addParagraphClause(textValue) {
+            const box = document.getElementById('dynamicClausesBox');
+            const rowId = 'clause_row_' + Date.now() + Math.floor(Math.random() * 100);
             
-            const opt = {
-                margin:       [1, 1, 1, 1], // Top, Left, Bottom, Right in inches
-                filename:     \`Exemption_\${accusedName}_\${date}.pdf\`,
-                image:        { type: 'jpeg', quality: 1 },
-                html2canvas:  { scale: 2, useCORS: true, logging: false },
+            const div = document.createElement('div');
+            div.id = rowId;
+            div.className = 'flex gap-1.5 items-start bg-slate-900/50 p-1.5 rounded-lg border border-slate-800';
+            div.innerHTML = \`
+                <textarea class="clause-text-item form-input w-full bg-slate-950 border-slate-800 text-gray-200 text-xs p-2 leading-relaxed" rows="2" oninput="renderStructuralLayouts() text-align: justify;">\${textValue}</textarea>
+                <button onclick="document.getElementById('\${rowId}').remove(); renderStructuralLayouts();" class="text-red-400 hover:text-red-300 p-1 text-sm font-bold">×</button>
+            \`;
+            box.appendChild(div);
+            renderStructuralLayouts();
+        }
+
+        function setupMutationHooks() {
+            const trackableInputs = ['courtSelect', 'partyOne', 'partyTwo', 'firNumber', 'firDate', 'lawSections', 'policeStation', 'appSubject', 'prayerText', 'filingPlace', 'filingDate', 'counselSelect'];
+            trackableInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', renderStructuralLayouts);
+                document.getElementById(id).addEventListener('change', renderStructuralLayouts);
+            });
+        }
+
+        function generateHTMLSegment() {
+            const court = document.getElementById('courtSelect').value;
+            const p1 = document.getElementById('partyOne').value;
+            const p2 = document.getElementById('partyTwo').value;
+            const firNo = document.getElementById('firNumber').value;
+            const firDt = document.getElementById('firDate').value;
+            const sections = document.getElementById('lawSections').value;
+            const ps = document.getElementById('policeStation').value;
+            const subject = document.getElementById('appSubject').value;
+            const prayer = document.getElementById('prayerText').value;
+            const place = document.getElementById('filingPlace').value;
+            const date = document.getElementById('filingDate').value;
+            const counselRaw = document.getElementById('counselSelect').value.split('|');
+            
+            // Collect active paragraph text values
+            const txtElements = document.querySelectorAll('.clause-text-item');
+            let parHTML = '<ol class="paragraph-list">';
+            let index = 1;
+            txtElements.forEach(el => {
+                const innerVal = el.value.trim();
+                if(innerVal.length > 0) {
+                    parHTML += \`<li style="text-indent: 40px; margin-bottom: 15px; text-align: justify;"><span style="display:inline-block; text-indent:0; width:30px;">\${index})</span>\${innerVal}</li>\`;
+                    index++;
+                }
+            });
+            parHTML += '</ol>';
+
+            return \`
+                <div class="court-header-print">\${court}</div>
+                
+                <div class="parties-wrapper">
+                    <div style="text-align: left;">\${p1}</div>
+                    <div style="text-align: center; font-style: italic; font-weight: normal; font-size:11pt; border: 1px solid #000; padding: 2px 8px; border-radius:10px;">Versus</div>
+                    <div style="text-align: right;">\${p2}</div>
+                </div>
+
+                <div class="case-meta-block">
+                    <div>FIR No. : \${firNo} dated \${firDt}</div>
+                    <div>U/s : \${sections}</div>
+                    <div>P.S. : \${ps}</div>
+                </div>
+
+                <div class="document-subject">
+                    <strong>SUBJECT:</strong> \${subject}
+                </div>
+
+                <div style="margin-bottom: 15px; font-weight: bold;">RESPECTED SIR,</div>
+                <div style="margin-bottom: 15px; text-indent: 40px;">It is respectfully submitted as under:-</div>
+                
+                \${parHTML}
+
+                <div class="prayer-block">
+                    <strong>PRAYER:</strong> \${prayer}
+                </div>
+
+                <div class="footer-signatures">
+                    <div>
+                        <div><strong>Place:</strong> \${place}</div>
+                        <div><strong>Dated:</strong> \${date}</div>
+                    </div>
+                    <div style="text-align: right; line-height: 1.4;">
+                        <strong>Submitted By,</strong><br><br><br>
+                        <span>___________________________</span><br>
+                        <span style="font-weight: bold;">\${p2}</span><br>
+                        <span style="font-size: 10pt; font-style: italic;">(Applicant / Accused)</span>
+                    </div>
+                </div>
+
+                <div class="counsel-stamp">
+                    <strong>Through Counsel:</strong><br><br><br>
+                    <span style="font-weight: bold; text-decoration: underline;">\${counselRaw[0]}</span><br>
+                    <span>\${counselRaw[1]}</span>
+                </div>
+            \`;
+        }
+
+        function renderStructuralLayouts() {
+            const rawHTML = generateHTMLSegment();
+            document.getElementById('preview-container').innerHTML = rawHTML;
+            document.getElementById('pdf-render-sandbox').innerHTML = rawHTML;
+        }
+
+        function compileAndDownloadPDF() {
+            const renderSandbox = document.getElementById('pdf-render-sandbox');
+            const secondPartyName = document.getElementById('partyTwo').value.replace(/[^a-zA-Z0-9]/g, '_');
+            const templateKey = document.getElementById('templatePreset').value;
+            
+            const exportConfig = {
+                margin:       0, // Zero margin parameter because padding is embedded within sandboxed element styles
+                filename:     \`\${templateKey}_application_\${secondPartyName}.pdf\`,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { 
+                    scale: 3, // Premium quality scaling printing DPI factor
+                    useCORS: true, 
+                    logging: false,
+                    letterRendering: true
+                },
                 jsPDF:        { unit: 'in', format: 'legal', orientation: 'portrait' }
             };
 
-            // Temporarily adjust box shadow for clean print
-            element.style.boxShadow = 'none';
-            
-            html2pdf().set(opt).from(element).save().then(() => {
-                // Restore shadow after saving
-                element.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.5)';
-            });
+            // Process isolated conversion sequence
+            html2pdf().set(exportConfig).from(renderSandbox).save();
         }
     </script>
 </body>
@@ -212,9 +451,7 @@ export default {
     `;
 
     return new Response(html, {
-      headers: {
-        "content-type": "text/html;charset=UTF-8",
-      },
+      headers: { "content-type": "text/html;charset=UTF-8" }
     });
-  },
-};
+  }
+}
