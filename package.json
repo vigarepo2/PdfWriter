@@ -1,6 +1,25 @@
 {
-  "name": "ladc-exemption-generator",
-  "version": "1.0.0",
+  "name": "pdfwriter",
+  "version": "2.0.0",
+  "description": "A Cloudflare Worker app for generating professional legal application PDFs with a live editor and native jsPDF export.",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/worker.js",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.18.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "pdf",
+    "cloudflare-worker",
+    "legal-document",
+    "jspdf",
+    "court-application"
+  ]
 }
