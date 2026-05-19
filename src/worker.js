@@ -333,8 +333,7 @@ export default {
             }
 
             return '' +
-                /* Top margin reduced to 0.7in, and bottom reduced to 0.5in to compensate for the massive stamp space */
-                '<div style="padding: 0.7in 1in 0.5in 1.25in; font-family: \\'Times New Roman\\', Times, serif; font-size: 13pt; color: black; line-height: 1.45;">' +
+                '<div style="padding: 0.7in 1in 0.8in 1.25in; font-family: \\'Times New Roman\\', Times, serif; font-size: 13pt; color: black; line-height: 1.45;">' +
                     
                     /* Court Title */
                     '<div style="text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 0px; line-height: 1.3;">' + v('courtSelect') + '</div>' +
@@ -378,7 +377,8 @@ export default {
                         '</tr>' +
                     '</table>' +
                     
-                    '<div style="text-align: center; margin-top: 35px; width: 50%; margin-left: auto;">' +
+                    /* CENTERED COUNSEL FIX: 100% width, centered text, with bottom padding */
+                    '<div style="text-align: center; margin-top: 45px; width: 100%; padding-bottom: 20px;">' +
                         'Through Counsel<br><br><br>' +
                         '<span style="font-weight: bold;">' + counsel[0] + '</span><br>' + counsel[1] +
                     '</div>' +
