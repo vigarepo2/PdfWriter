@@ -41,37 +41,37 @@ export default {
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
         }
         
-        /* Interactive Screen Preview Container (Responsive Visual Mockup) */
+        /* Interactive Screen Preview Container */
         #preview-container {
             background: #ffffff;
             color: #000000;
             font-family: 'Times New Roman', Times, serif;
             width: 100%;
-            aspect-ratio: 8.5 / 14;
-            padding: 1.2in 1in 1in 1.4in;
+            max-width: 8.5in;
+            min-height: 11in;
+            padding: 1in;
             box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
-            overflow-y: auto;
-            font-size: 13pt;
-            line-height: 1.7;
+            font-size: 12pt;
+            line-height: 1.5;
         }
 
         /* ----------------------------------------------------
            CRITICAL FIX: Isolated PDF Target Sandbox Engine
-           This is forced to a constant 816px (8.5in at 96 DPI)
-           with absolute layout parameters to bypass viewport skewing.
+           Locked at absolute dimensions with tighter line gaps 
+           to 100% guarantee single-page rendering.
         ---------------------------------------------------- */
         #pdf-render-sandbox {
             position: absolute;
             left: -9999px;
             top: -9999px;
-            width: 816px; 
+            width: 8.5in;
+            box-sizing: border-box;
             background: #ffffff;
             color: #000000;
             font-family: 'Times New Roman', Times, serif;
-            font-size: 13pt;
-            line-height: 1.8;
-            padding: 1.2in 1in 1in 1.4in; /* High-grade judicial left margin spacing */
-            box-sizing: border-box;
+            font-size: 12pt;
+            line-height: 1.5;
+            padding: 1in 1in 1in 1.2in; /* Professional standard court margins */
             text-align: justify;
         }
 
@@ -79,64 +79,61 @@ export default {
         .court-header-print {
             text-align: center;
             font-weight: bold;
-            font-size: 14pt;
+            font-size: 13pt;
             text-transform: uppercase;
-            margin-bottom: 35px;
-            line-height: 1.5;
+            margin-bottom: 25px;
+            line-height: 1.4;
         }
         .parties-wrapper {
             display: grid;
             grid-template-columns: 1fr auto 1fr;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-weight: bold;
             align-items: center;
         }
         .case-meta-block {
             margin-left: auto;
-            width: 55%;
+            width: 50%;
             font-weight: bold;
-            margin-bottom: 30px;
-            line-height: 1.6;
+            margin-bottom: 25px;
+            line-height: 1.4;
             border-left: 2px solid #000000;
-            padding-left: 15px;
+            padding-left: 12px;
         }
         .document-subject {
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             text-align: justify;
-            line-height: 1.5;
+            line-height: 1.4;
             text-transform: uppercase;
             border-bottom: 1.5px solid #000;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
         }
         .paragraph-list {
-            margin-bottom: 35px;
+            margin-bottom: 25px;
             list-style-type: none;
             padding: 0;
         }
         .paragraph-list li {
-            margin-bottom: 18px;
-            text-indent: 0px;
-            padding-left: 0px;
+            margin-bottom: 12px;
             text-align: justify;
         }
         .prayer-block {
-            margin-bottom: 45px;
-            text-indent: 40px;
+            margin-bottom: 35px;
             text-align: justify;
         }
         .footer-signatures {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            margin-top: 20px;
+            margin-top: 15px;
             align-items: end;
         }
         .counsel-stamp {
-            margin-top: 40px;
+            margin-top: 30px;
             margin-left: auto;
-            width: 55%;
+            width: 50%;
             text-align: left;
-            line-height: 1.4;
+            line-height: 1.3;
         }
     </style>
 </head>
@@ -220,7 +217,7 @@ export default {
                     + Add Clause
                 </button>
             </div>
-            <div id="dynamicClausesBox" class="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
+            <div id="dynamicClausesBox" class="flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-1">
                 </div>
         </div>
 
@@ -258,17 +255,16 @@ export default {
         </button>
     </div>
 
-    <div class="w-full xl:w-[68%] overflow-x-auto flex justify-center items-start bg-slate-950/40 rounded-2xl p-4 lg:p-8 border border-slate-900">
-        <div id="preview-container">
-            </div>
+    <div class="w-full xl:w-[68%] flex justify-center items-start bg-slate-950/40 rounded-2xl p-4 lg:p-8 border border-slate-900">
+        <div class="w-full overflow-x-auto flex justify-center">
+            <div id="preview-container">
+                </div>
+        </div>
     </div>
 
-    <div id="pdf-render-sandbox">
-        </div>
-
+    <div id="pdf-render-sandbox"></div>
 
     <script>
-        // Data presets matrix configurations
         const templates = {
             exemption: {
                 subject: "Application for exemption of personal appearance of accused/applicant.",
@@ -280,14 +276,14 @@ export default {
                 prayer: "It is therefore requested that in the lite of facts and circumstance mentioned above personal appearance of accused may kindly be exempted for today only."
             },
             bail_modification: {
-                subject: "Application to put-up the file and to modify order dated 08-05-2026 to the extent of the sum of bail bonds of surety from Rs. 40,000/- to Rs. 30,000/- and also to direct the subordinate court to consider the earlier bail bonds.",
+                subject: "Application to modify order dated 08-05-2026 to the extent of the sum of bail bonds of surety from Rs. 40,000/- to Rs. 30,000/- and to direct the subordinate court to consider the earlier bail bonds.",
                 paragraphs: [
                     "That the above-said criminal appeal is pending in this Hon'ble Court and is fixed for 27-07-2026.",
-                    "That an application for suspension of awarded sentence was filed along with the present appeal, which was decided by this Hon'ble Court with a direction to furnish bail bonds in the sum of Rs. 40,000/- each with one surety in the like amount each to the satisfaction of the learned trial court within 15 days from the date of order, i.e., 08-05-2026.",
-                    "That the applicants are residents of the above-said addresses which fall in the state of Uttar Pradesh, so the applicants are unable to arrange sureties of such amount in this area.",
-                    "That earlier the applicants had furnished their respective cash surety in the sum of Rs. 30,000/- under section 437-A Cr.P.C before the Ld. trial court as the applicants were unable to arrange sureties."
+                    "That an application for suspension of awarded sentence was decided by this Hon'ble Court with a direction to furnish bail bonds in the sum of Rs. 40,000/- each with one surety.",
+                    "That the applicants are residents of Uttar Pradesh, so the applicants are unable to arrange local sureties of such a high amount in this area.",
+                    "That earlier the applicants had furnished their respective cash surety in the sum of Rs. 30,000/- under section 437-A Cr.P.C before the Ld. trial court."
                 ],
-                prayer: "It is, therefore, requested that the sum of bail bonds of surety may kindly be modified from Rs. 40,000/- to Rs. 30,000/- and also to direct the subordinate court to consider the earlier bail bonds in the interest of justice."
+                prayer: "It is, therefore, requested that the sum of bail bonds of surety may kindly be modified from Rs. 40,000/- to Rs. 30,000/- in the interest of justice."
             },
             blank: {
                 subject: "Application under section _____ for the purpose of __________________.",
@@ -299,7 +295,6 @@ export default {
             }
         };
 
-        // Initialize state engine
         window.addEventListener('DOMContentLoaded', () => {
             loadPresetTemplate();
             setupMutationHooks();
@@ -327,7 +322,7 @@ export default {
             div.id = rowId;
             div.className = 'flex gap-1.5 items-start bg-slate-900/50 p-1.5 rounded-lg border border-slate-800';
             div.innerHTML = \`
-                <textarea class="clause-text-item form-input w-full bg-slate-950 border-slate-800 text-gray-200 text-xs p-2 leading-relaxed" rows="2" oninput="renderStructuralLayouts() text-align: justify;">\${textValue}</textarea>
+                <textarea class="clause-text-item form-input w-full bg-slate-950 border-slate-800 text-gray-200 text-xs p-2 leading-relaxed" rows="2" oninput="renderStructuralLayouts()">\${textValue}</textarea>
                 <button onclick="document.getElementById('\${rowId}').remove(); renderStructuralLayouts();" class="text-red-400 hover:text-red-300 p-1 text-sm font-bold">×</button>
             \`;
             box.appendChild(div);
@@ -356,14 +351,13 @@ export default {
             const date = document.getElementById('filingDate').value;
             const counselRaw = document.getElementById('counselSelect').value.split('|');
             
-            // Collect active paragraph text values
             const txtElements = document.querySelectorAll('.clause-text-item');
             let parHTML = '<ol class="paragraph-list">';
             let index = 1;
             txtElements.forEach(el => {
                 const innerVal = el.value.trim();
                 if(innerVal.length > 0) {
-                    parHTML += \`<li style="text-indent: 40px; margin-bottom: 15px; text-align: justify;"><span style="display:inline-block; text-indent:0; width:30px;">\${index})</span>\${innerVal}</li>\`;
+                    parHTML += \`<li style="text-indent: 40px; margin-bottom: 12px; text-align: justify;"><span style="display:inline-block; text-indent:0; width:25px;">\${index})</span>\${innerVal}</li>\`;
                     index++;
                 }
             });
@@ -374,7 +368,7 @@ export default {
                 
                 <div class="parties-wrapper">
                     <div style="text-align: left;">\${p1}</div>
-                    <div style="text-align: center; font-style: italic; font-weight: normal; font-size:11pt; border: 1px solid #000; padding: 2px 8px; border-radius:10px;">Versus</div>
+                    <div style="text-align: center; font-style: italic; font-weight: normal; font-size:11pt; border: 1px solid #000; padding: 1px 6px; border-radius:8px;">Versus</div>
                     <div style="text-align: right;">\${p2}</div>
                 </div>
 
@@ -388,8 +382,8 @@ export default {
                     <strong>SUBJECT:</strong> \${subject}
                 </div>
 
-                <div style="margin-bottom: 15px; font-weight: bold;">RESPECTED SIR,</div>
-                <div style="margin-bottom: 15px; text-indent: 40px;">It is respectfully submitted as under:-</div>
+                <div style="margin-bottom: 8px; font-weight: bold;">RESPECTED SIR,</div>
+                <div style="margin-bottom: 12px; text-indent: 40px;">It is respectfully submitted as under:-</div>
                 
                 \${parHTML}
 
@@ -402,7 +396,7 @@ export default {
                         <div><strong>Place:</strong> \${place}</div>
                         <div><strong>Dated:</strong> \${date}</div>
                     </div>
-                    <div style="text-align: right; line-height: 1.4;">
+                    <div style="text-align: right; line-height: 1.3;">
                         <strong>Submitted By,</strong><br><br><br>
                         <span>___________________________</span><br>
                         <span style="font-weight: bold;">\${p2}</span><br>
@@ -430,11 +424,11 @@ export default {
             const templateKey = document.getElementById('templatePreset').value;
             
             const exportConfig = {
-                margin:       0, // Zero margin parameter because padding is embedded within sandboxed element styles
+                margin:       0, 
                 filename:     \`\${templateKey}_application_\${secondPartyName}.pdf\`,
                 image:        { type: 'jpeg', quality: 1.0 },
                 html2canvas:  { 
-                    scale: 3, // Premium quality scaling printing DPI factor
+                    scale: 3, 
                     useCORS: true, 
                     logging: false,
                     letterRendering: true
@@ -442,7 +436,6 @@ export default {
                 jsPDF:        { unit: 'in', format: 'legal', orientation: 'portrait' }
             };
 
-            // Process isolated conversion sequence
             html2pdf().set(exportConfig).from(renderSandbox).save();
         }
     </script>
