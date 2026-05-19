@@ -6,151 +6,80 @@ export default {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LADC Drafting Suite | Fazilka</title>
+    <title>LADC Professional Suite</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Minimalist Foundation */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #fafafa;
-            color: #000000;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f4f4f5; color: #09090b; margin: 0; padding: 0; }
 
-        /* Brutalist / Minimal Inputs */
-        .form-label {
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #404040;
-            margin-bottom: 0.4rem;
-            display: block;
-        }
-        .form-input {
-            width: 100%;
-            background-color: #ffffff;
-            border: 1px solid #d4d4d4;
-            color: #000000;
-            border-radius: 6px;
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            -webkit-appearance: none;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: #000000;
-            box-shadow: 0 0 0 1px #000000;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background-color: #000000;
-            color: #ffffff;
-            font-weight: 600;
-            width: 100%;
-            padding: 1rem;
-            border-radius: 6px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .btn-primary:active { background-color: #333333; }
+        /* Minimalist Input Styling */
+        .form-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #52525b; margin-bottom: 0.35rem; display: block; }
+        .form-input { width: 100%; background-color: #ffffff; border: 1px solid #e4e4e7; color: #09090b; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.875rem; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.01); -webkit-appearance: none; }
+        .form-input:focus { outline: none; border-color: #09090b; box-shadow: 0 0 0 1px #09090b; }
         
-        .btn-secondary {
-            background-color: #ffffff;
-            color: #000000;
-            border: 1px solid #d4d4d4;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        .btn-secondary:active { background-color: #f5f5f5; border-color: #000000; }
+        /* Premium Buttons */
+        .btn-primary { background-color: #09090b; color: #ffffff; font-weight: 600; width: 100%; padding: 1rem; border-radius: 6px; text-align: center; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid #09090b; }
+        .btn-primary:active { transform: translateY(1px); background-color: #27272a; }
+        .btn-secondary { background-color: #ffffff; color: #09090b; border: 1px solid #e4e4e7; font-size: 0.75rem; font-weight: 600; padding: 0.35rem 0.75rem; border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; gap: 0.25rem; }
+        .btn-secondary:active { background-color: #f4f4f5; border-color: #09090b; }
+        .icon-btn { color: #a1a1aa; padding: 0.25rem; border-radius: 4px; transition: all 0.2s; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .icon-btn:hover { background-color: #e4e4e7; color: #09090b; }
+        .icon-btn.danger:hover { background-color: #fee2e2; color: #ef4444; }
+        .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        /* Custom Clean Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 10px; }
 
-        /* THE RESPONSIVE PREVIEW PAPER */
-        .preview-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            overflow: hidden; /* Stops mobile horizontal scrolling */
-        }
-        
-        .legal-paper {
-            background: #ffffff;
-            color: #000000;
-            width: 816px; /* 8.5in physical size */
-            height: 1344px; /* 14in physical size */
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            border: 1px solid #e5e5e5;
-            transform-origin: top center;
-            /* Padding and fonts are inline so PDF captures them perfectly */
+        /* SCALING FIX FOR MOBILE PREVIEW */
+        .preview-wrapper { width: 100%; display: flex; justify-content: center; overflow: hidden; transform-origin: top center; }
+        .legal-paper { 
+            background: #ffffff; color: #000000; 
+            width: 816px !important; height: 1344px !important; /* Forces physical Legal size */
+            min-width: 816px; flex-shrink: 0; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            border: 1px solid #e4e4e7; 
+            transform-origin: top center; 
         }
 
-        /* Mobile Tab System */
-        .tab-btn {
-            flex: 1;
-            text-align: center;
-            padding: 1rem;
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: #737373;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .tab-btn.active {
-            color: #000000;
-            border-bottom-color: #000000;
-        }
+        /* Tabs */
+        .tab-btn { flex: 1; text-align: center; padding: 1rem; font-weight: 600; font-size: 0.875rem; color: #71717a; border-bottom: 2px solid transparent; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; background: #ffffff;}
+        .tab-btn.active { color: #09090b; border-bottom-color: #09090b; }
         
-        /* Hide logic for tabs */
-        @media (max-width: 1023px) {
-            .desktop-only { display: none !important; }
-            .mobile-view { display: flex; flex-direction: column; height: 100vh; }
-        }
-        @media (min-width: 1024px) {
-            .mobile-tabs { display: none !important; }
-        }
+        @media (max-width: 1023px) { .desktop-only { display: none !important; } }
+        @media (min-width: 1024px) { .mobile-tabs { display: none !important; } }
     </style>
 </head>
-<body class="lg:flex lg:h-screen lg:overflow-hidden bg-neutral-100">
+<body class="lg:flex lg:h-screen lg:overflow-hidden">
 
-    <div class="mobile-tabs flex bg-white border-b border-neutral-200 sticky top-0 z-50">
-        <button id="tab-editor" onclick="switchTab('editor')" class="tab-btn active">📝 Editor</button>
-        <button id="tab-preview" onclick="switchTab('preview')" class="tab-btn">📄 Preview</button>
+    <div class="mobile-tabs flex border-b border-zinc-200 sticky top-0 z-50 shadow-sm">
+        <button id="tab-editor" onclick="switchTab('editor')" class="tab-btn active">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            Editor
+        </button>
+        <button id="tab-preview" onclick="switchTab('preview')" class="tab-btn">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+            Preview
+        </button>
     </div>
 
-    <div id="panel-editor" class="w-full lg:w-[450px] bg-white lg:h-screen overflow-y-auto flex flex-col border-r border-neutral-200 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-        
-        <div class="p-6 border-b border-neutral-100 desktop-only bg-white sticky top-0 z-20">
-            <h1 class="text-xl font-bold tracking-tight text-black">LADC Engine</h1>
-            <p class="text-xs text-neutral-500 font-medium mt-1 uppercase tracking-wider">Fazilka Court Format</p>
+    <div id="panel-editor" class="w-full lg:w-[460px] bg-white lg:h-screen overflow-y-auto flex flex-col border-r border-zinc-200 z-10 relative">
+        <div class="p-5 border-b border-zinc-100 desktop-only bg-white sticky top-0 z-20">
+            <h1 class="text-xl font-bold tracking-tight text-zinc-900 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path></svg>
+                LADC Suite
+            </h1>
+            <p class="text-[0.65rem] text-zinc-500 font-bold mt-1 uppercase tracking-widest">Fazilka Protocol</p>
         </div>
 
-        <div class="p-5 lg:p-6 flex flex-col gap-5 flex-grow">
+        <div class="p-5 flex flex-col gap-5 flex-grow">
             <div>
                 <label class="form-label">Application Type</label>
-                <select id="templatePreset" onchange="loadPreset()" class="form-input bg-neutral-50 font-medium">
+                <select id="templatePreset" onchange="loadPreset()" class="form-input bg-zinc-50 font-medium border-zinc-300">
                     <option value="exemption">Application for Exemption</option>
                     <option value="bail">Bail Bond Modification</option>
                     <option value="blank">Blank Standard Form</option>
@@ -170,19 +99,19 @@ export default {
                 </select>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-3">
                 <div><label class="form-label">Complainant</label><input type="text" id="partyOne" value="State" class="form-input"></div>
                 <div><label class="form-label">Accused Name</label><input type="text" id="partyTwo" value="Sandeep Singh @ Budhu." class="form-input"></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-3">
                 <div><label class="form-label">FIR Number</label><input type="text" id="firNumber" value="06" class="form-input"></div>
                 <div><label class="form-label">FIR Date</label><input type="text" id="firDate" value="13.01.2026" class="form-input"></div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div><label class="form-label">Under Section</label><input type="text" id="lawSections" value="21, 27 NDPS Act" class="form-input"></div>
-                <div><label class="form-label">Police Station</label><input type="text" id="policeStation" value="Amir Khas." class="form-input"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="form-label">Under Section (U/s)</label><input type="text" id="lawSections" value="21, 27 NDPS Act" class="form-input"></div>
+                <div><label class="form-label">Police Station (PS)</label><input type="text" id="policeStation" value="Amir Khas." class="form-input"></div>
             </div>
 
             <div>
@@ -193,9 +122,12 @@ export default {
             <div>
                 <div class="flex justify-between items-center mb-2">
                     <label class="form-label mb-0">Factual Statements</label>
-                    <button onclick="addClause('')" class="btn-secondary">+ Add Row</button>
+                    <button onclick="addNewClause()" class="btn-secondary">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Add Row
+                    </button>
                 </div>
-                <div id="clauseBox" class="flex flex-col gap-3"></div>
+                <div id="clauseBox" class="flex flex-col gap-2"></div>
             </div>
 
             <div>
@@ -203,9 +135,9 @@ export default {
                 <textarea id="prayerText" rows="2" class="form-input resize-none"></textarea>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div><label class="form-label">Place</label><input type="text" id="filingPlace" value="Fazilka" class="form-input"></div>
-                <div><label class="form-label">Date</label><input type="text" id="filingDate" value="09.04.2026." class="form-input"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div><label class="form-label">Filing Place</label><input type="text" id="filingPlace" value="Fazilka" class="form-input"></div>
+                <div><label class="form-label">Filing Date</label><input type="text" id="filingDate" value="09.04.2026." class="form-input"></div>
             </div>
 
             <div>
@@ -221,21 +153,24 @@ export default {
             </div>
         </div>
         
-        <div class="p-5 lg:p-6 border-t border-neutral-200 bg-white sticky bottom-0 z-20">
-            <button onclick="downloadCleanPDF()" class="btn-primary">
+        <div class="p-5 border-t border-zinc-200 bg-white sticky bottom-0 z-20">
+            <button onclick="exportPerfectPDF()" class="btn-primary shadow-xl">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 Download Legal PDF
             </button>
         </div>
     </div>
 
-    <div id="panel-preview" class="flex-1 bg-neutral-100 lg:h-screen overflow-y-auto hidden lg:block p-4 lg:p-8">
+    <div id="panel-preview" class="flex-1 lg:h-screen overflow-y-auto hidden lg:block p-4 lg:p-8 relative">
         <div id="previewContainer" class="preview-wrapper">
             <div id="previewPaper" class="legal-paper">
                 </div>
         </div>
         <div class="mt-8 lg:hidden pb-10">
-            <button onclick="downloadCleanPDF()" class="btn-primary shadow-lg">Download Legal PDF</button>
+            <button onclick="exportPerfectPDF()" class="btn-primary">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Download PDF
+            </button>
         </div>
     </div>
 
@@ -267,147 +202,180 @@ export default {
             }
         };
 
-        // Mobile Tab Logic
-        function switchTab(tab) {
-            const editor = document.getElementById('panel-editor');
-            const preview = document.getElementById('panel-preview');
-            const btnEditor = document.getElementById('tab-editor');
-            const btnPreview = document.getElementById('tab-preview');
+        let currentClauses = [];
 
-            if(tab === 'editor') {
-                editor.classList.remove('hidden');
-                editor.classList.add('flex');
-                preview.classList.add('hidden');
-                preview.classList.remove('block');
-                btnEditor.classList.add('active');
-                btnPreview.classList.remove('active');
-            } else {
-                editor.classList.add('hidden');
-                editor.classList.remove('flex');
-                preview.classList.remove('hidden');
-                preview.classList.add('block');
-                btnPreview.classList.add('active');
-                btnEditor.classList.remove('active');
-                scaleMobilePaper(); // Adjust scale when tab is shown
-            }
-        }
-
-        // Initialize App
+        // Application Boot
         window.onload = () => {
             loadPreset();
             ['courtSelect', 'partyOne', 'partyTwo', 'firNumber', 'firDate', 'lawSections', 'policeStation', 'appSubject', 'prayerText', 'filingPlace', 'filingDate', 'counselSelect'].forEach(id => {
-                document.getElementById(id).addEventListener('input', updatePaper);
-                document.getElementById(id).addEventListener('change', updatePaper);
+                document.getElementById(id).addEventListener('input', triggerRender);
+                document.getElementById(id).addEventListener('change', triggerRender);
             });
-            window.addEventListener('resize', scaleMobilePaper);
-            scaleMobilePaper();
+            window.addEventListener('resize', calibrateScale);
+            calibrateScale();
         };
 
-        // Shrinks the document preview to fit perfectly on your mobile screen!
-        function scaleMobilePaper() {
-            const container = document.getElementById('previewContainer');
-            const paper = document.getElementById('previewPaper');
-            if (!container || !paper) return;
-            
-            // Calculate screen width vs document width (816px)
-            const availableWidth = container.clientWidth;
-            if (availableWidth < 816) {
-                const scale = availableWidth / 816;
-                paper.style.transform = \`scale(\${scale})\`;
-                // Adjust container height so it doesn't leave massive blank space
-                container.style.height = \`\${1344 * scale}px\`;
+        // Mobile Tabs
+        function switchTab(tab) {
+            const editor = document.getElementById('panel-editor');
+            const preview = document.getElementById('panel-preview');
+            const btnEd = document.getElementById('tab-editor');
+            const btnPr = document.getElementById('tab-preview');
+
+            if(tab === 'editor') {
+                editor.style.display = 'flex';
+                preview.style.display = 'none';
+                btnEd.classList.add('active'); btnPr.classList.remove('active');
             } else {
-                paper.style.transform = 'scale(1)';
-                container.style.height = 'auto';
+                editor.style.display = 'none';
+                preview.style.display = 'block';
+                btnPr.classList.add('active'); btnEd.classList.remove('active');
+                calibrateScale();
             }
         }
 
+        // Viewport Math for perfect matching
+        function calibrateScale() {
+            const wrapper = document.getElementById('previewContainer');
+            const paper = document.getElementById('previewPaper');
+            if (!wrapper || !paper) return;
+            
+            const availableWidth = wrapper.clientWidth;
+            if (availableWidth < 816) {
+                const scale = availableWidth / 816;
+                paper.style.transform = \`scale(\${scale})\`;
+                wrapper.style.height = \`\${1344 * scale}px\`;
+            } else {
+                paper.style.transform = 'scale(1)';
+                wrapper.style.height = '1344px';
+            }
+        }
+
+        // Logic & State Management
         function loadPreset() {
             const config = library[document.getElementById('templatePreset').value];
             document.getElementById('appSubject').value = config.subject;
             document.getElementById('prayerText').value = config.prayer;
-            
-            document.getElementById('clauseBox').innerHTML = '';
-            config.paragraphs.forEach(text => addClause(text));
-            updatePaper();
+            currentClauses = [...config.paragraphs];
+            drawClauseUI();
+            triggerRender();
         }
 
-        function addClause(text) {
-            const id = 'row_' + Date.now();
-            const div = document.createElement('div');
-            div.id = id;
-            div.className = 'flex gap-2 items-start';
-            div.innerHTML = \`
-                <textarea class="form-input resize-none text-sm p-2" rows="2" oninput="updatePaper()">\${text}</textarea>
-                <button onclick="document.getElementById('\${id}').remove(); updatePaper();" class="text-neutral-400 hover:text-black font-bold text-xl px-1">&times;</button>
-            \`;
-            document.getElementById('clauseBox').appendChild(div);
-            updatePaper();
+        function drawClauseUI() {
+            const box = document.getElementById('clauseBox');
+            box.innerHTML = '';
+            currentClauses.forEach((text, i) => {
+                const row = document.createElement('div');
+                row.className = 'flex gap-1.5 items-start bg-zinc-50 p-2 border border-zinc-200 rounded-md';
+                row.innerHTML = \`
+                    <div class="flex flex-col gap-1 mt-0.5">
+                        <button onclick="shiftClause(\${i}, -1)" class="icon-btn" \${i === 0 ? 'disabled' : ''}>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
+                        </button>
+                        <button onclick="shiftClause(\${i}, 1)" class="icon-btn" \${i === currentClauses.length - 1 ? 'disabled' : ''}>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+                    <textarea class="form-input resize-none text-sm p-2 bg-transparent border-transparent shadow-none focus:bg-white focus:border-zinc-300 focus:shadow-sm" rows="2" oninput="updateClauseText(\${i}, this.value)">\${text}</textarea>
+                    <button onclick="deleteClause(\${i})" class="icon-btn danger mt-0.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                \`;
+                box.appendChild(row);
+            });
         }
 
-        // Generates the strict HTML layout for court
-        function buildDocumentHTML() {
-            const getV = (id) => document.getElementById(id).value;
-            const counsel = getV('counselSelect').split('|');
+        function updateClauseText(index, val) {
+            currentClauses[index] = val;
+            triggerRender();
+        }
+
+        function shiftClause(index, dir) {
+            if (index + dir < 0 || index + dir >= currentClauses.length) return;
+            const temp = currentClauses[index];
+            currentClauses[index] = currentClauses[index + dir];
+            currentClauses[index + dir] = temp;
+            drawClauseUI();
+            triggerRender();
+        }
+
+        function deleteClause(index) {
+            currentClauses.splice(index, 1);
+            drawClauseUI();
+            triggerRender();
+        }
+
+        function addNewClause() {
+            currentClauses.push("");
+            drawClauseUI();
+            triggerRender();
+        }
+
+        // Master Document Blueprint Engine
+        function formulateHTML() {
+            const v = id => document.getElementById(id).value;
+            const counsel = v('counselSelect').split('|');
             
             let parHTML = '';
             let idx = 1;
-            document.querySelectorAll('#clauseBox textarea').forEach(n => {
-                if(n.value.trim()) {
+            currentClauses.forEach(text => {
+                if(text.trim()) {
                     parHTML += \`
-                    <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse;">
-                        <tr><td style="width: 35px; vertical-align: top;">\${idx})</td><td style="vertical-align: top; text-align: justify;">\${n.value.trim()}</td></tr>
+                    <table style="width: 100%; margin-bottom: 12px; border-collapse: collapse;">
+                        <tr><td style="width: 35px; vertical-align: top;">\${idx})</td><td style="vertical-align: top; text-align: justify;">\${text.trim()}</td></tr>
                     </table>\`;
                     idx++;
                 }
             });
 
+            // Reduced margins & paddings across the board to strictly prevent 2-page bleed.
             return \`
-                <div style="padding: 1.25in 1in 1in 1.25in; font-family: 'Times New Roman', Times, serif; font-size: 13pt; color: black; line-height: 1.5;">
-                    <div style="text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 45px; line-height: 1.4;">
-                        \${getV('courtSelect')}
+                <div style="padding: 1.1in 1in 0.8in 1.25in; font-family: 'Times New Roman', Times, serif; font-size: 13pt; color: black; line-height: 1.45;">
+                    
+                    <div style="text-align: center; font-weight: bold; font-size: 13pt; text-transform: uppercase; margin-bottom: 30px; line-height: 1.3;">
+                        \${v('courtSelect')}
                     </div>
                     
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
                         <tr>
-                            <td style="width: 25%; font-weight: bold; vertical-align: top;">\${getV('partyOne')}</td>
+                            <td style="width: 25%; font-weight: bold; vertical-align: top;">\${v('partyOne')}</td>
                             <td style="width: 20%; font-weight: bold; vertical-align: top; text-align: center;">v/s</td>
-                            <td style="width: 55%; font-weight: bold; vertical-align: top; text-align: left;">\${getV('partyTwo')}</td>
+                            <td style="width: 55%; font-weight: bold; vertical-align: top; text-align: left;">\${v('partyTwo')}</td>
                         </tr>
                         <tr>
                             <td></td><td></td>
-                            <td style="padding-top: 20px; line-height: 1.5;">
-                                FIR No. \${getV('firNumber')} dated \${getV('firDate')},<br>
-                                U/s \${getV('lawSections')},<br>
-                                PS \${getV('policeStation')}
+                            <td style="padding-top: 15px; line-height: 1.4;">
+                                FIR No. \${v('firNumber')} dated \${v('firDate')},<br>
+                                U/s \${v('lawSections')},<br>
+                                PS \${v('policeStation')}
                             </td>
                         </tr>
                     </table>
 
-                    <div style="font-weight: bold; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 30px; text-align: justify;">
-                        \${getV('appSubject')}
+                    <div style="font-weight: bold; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 25px; text-align: justify;">
+                        \${v('appSubject')}
                     </div>
 
-                    <div style="margin-bottom: 20px;">Respected Sir,</div>
-                    <div style="margin-bottom: 20px; text-indent: 40px;">It is submitted as follows:</div>
+                    <div style="margin-bottom: 15px;">Respected Sir,</div>
+                    <div style="margin-bottom: 15px; text-indent: 40px;">It is submitted as follows:</div>
                     
                     <div>\${parHTML}</div>
 
-                    <div style="margin-top: 30px; margin-bottom: 50px; text-indent: 40px; text-align: justify;">\${getV('prayerText')}</div>
+                    <div style="margin-top: 20px; margin-bottom: 35px; text-indent: 40px; text-align: justify;">\${v('prayerText')}</div>
 
-                    <table style="width: 100%; margin-top: 40px;">
+                    <table style="width: 100%; margin-top: 20px;">
                         <tr>
-                            <td style="vertical-align: bottom;">Place: \${getV('filingPlace')}<br>Date: \${getV('filingDate')}</td>
+                            <td style="vertical-align: bottom;">Place: \${v('filingPlace')}<br>Date: \${v('filingDate')}</td>
                             <td style="text-align: right; vertical-align: bottom;">
                                 Submitted By<br><br><br>
-                                <span style="font-weight: bold;">\${getV('partyTwo').replace('.', '')}</span><br>
+                                <span style="font-weight: bold;">\${v('partyTwo').replace('.', '')}</span><br>
                                 (Accused/applicant)
                             </td>
                         </tr>
                     </table>
 
-                    <div style="text-align: center; margin-top: 50px; width: 50%; margin-left: auto;">
-                        Through Counsel<br><br><br><br>
+                    <div style="text-align: center; margin-top: 35px; width: 50%; margin-left: auto;">
+                        Through Counsel<br><br><br>
                         <span style="font-weight: bold;">\${counsel[0]}</span><br>
                         \${counsel[1]}
                     </div>
@@ -415,51 +383,35 @@ export default {
             \`;
         }
 
-        function updatePaper() {
-            document.getElementById('previewPaper').innerHTML = buildDocumentHTML();
-            scaleMobilePaper();
+        function triggerRender() {
+            document.getElementById('previewPaper').innerHTML = formulateHTML();
+            calibrateScale();
         }
 
-        /* BULLETPROOF PDF GENERATION FOR ANDROID 
-           Passes raw HTML string directly into the engine, skipping the viewport entirely. 
-           This prevents corrupted files and fixes Android Chrome blocking issues.
-        */
-        function downloadCleanPDF() {
-            // Give user immediate feedback
+        function exportPerfectPDF() {
             const btn = document.querySelector('.btn-primary');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = "Processing Document...";
+            const ogText = btn.innerHTML;
+            btn.innerHTML = `<svg class="animate-spin w-5 h-5 mr-2 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
             
-            const rawHTML = buildDocumentHTML();
-            const safeName = document.getElementById('partyTwo').value.replace(/[^a-zA-Z0-9]/g, '_');
+            const coreHTML = formulateHTML();
+            const tag = document.getElementById('partyTwo').value.replace(/[^a-zA-Z0-9]/g, '_');
 
             const opt = {
-                margin:       0, // Margins are hard-coded in the HTML structure
-                filename:     \`Application_\${safeName}.pdf\`,
+                margin:       0,
+                filename:     \`Application_\${tag}.pdf\`,
                 image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { 
-                    scale: 2, // High resolution crisp text
-                    useCORS: true,
-                    windowWidth: 816 // Forces html2canvas to ignore your mobile screen size
-                },
+                html2canvas:  { scale: 2, useCORS: true, windowWidth: 816 }, // Forces 816px layout
                 jsPDF:        { unit: 'in', format: 'legal', orientation: 'portrait' }
             };
 
-            // Using raw HTML string directly avoids all DOM corruption errors
-            html2pdf().set(opt).from(rawHTML).save().then(() => {
-                btn.innerHTML = originalText;
-            }).catch(err => {
-                alert("Error generating PDF. Please ensure you have a stable connection.");
-                btn.innerHTML = originalText;
+            html2pdf().set(opt).from(coreHTML).save().then(() => {
+                btn.innerHTML = ogText;
             });
         }
     </script>
 </body>
 </html>
     `;
-
-    return new Response(html, {
-      headers: { "content-type": "text/html;charset=UTF-8" }
-    });
+    return new Response(html, { headers: { "content-type": "text/html;charset=UTF-8" }});
   }
 }
