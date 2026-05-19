@@ -1,6 +1,6 @@
 {
   "name": "pdfwriter",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A mobile-first Cloudflare Worker app for generating professional legal application PDFs with separate case title and applicant/accused handling.",
   "private": true,
   "type": "module",
