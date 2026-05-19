@@ -27,7 +27,7 @@ export const FRONTEND_JS = String.raw`
             'Naazpreet Kaur, Advocate|Assistant, LADC, Fazilka.'
         ],
         proformas: [
-            { id: 'original', name: 'Original Exemption', reason: 'illness', stage: 'the purpose fixed' },
+            { id: 'original', name: 'Standard Exemption', reason: 'illness', stage: 'the purpose fixed' },
             { id: 'medical', name: 'Medical Emergency', reason: 'a sudden medical emergency', stage: 'the purpose fixed' },
             { id: 'hospital', name: 'Hospitalization', reason: 'hospitalization', stage: 'the purpose fixed' },
             { id: 'bereavement', name: 'Bereavement', reason: 'a bereavement in the family', stage: 'the purpose fixed' },
@@ -45,8 +45,6 @@ export const FRONTEND_JS = String.raw`
     const id = (x) => document.getElementById(x);
     const v = (x) => { const e = id(x); return e ? cleanText(e.value) : ''; };
     const esc = (s) => String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    
-    // Auto-formats spaces and cleans string
     const cleanText = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 
     // --- Text Generation Logic ---
@@ -57,13 +55,8 @@ export const FRONTEND_JS = String.raw`
         return a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
     }
     
-    function isPlural() {
-        return state.people.filter(p => cleanText(p.name)).length > 1;
-    }
-    
-    function getApplicantText() {
-        return getNames() || v('rightParty') || 'Accused/applicant';
-    }
+    function isPlural() { return state.people.filter(p => cleanText(p.name)).length > 1; }
+    function getApplicantText() { return getNames() || v('rightParty') || 'Accused/applicant'; }
 
     function generateSubject() {
         const n = getNames();
@@ -78,7 +71,6 @@ export const FRONTEND_JS = String.raw`
         const stage = v('caseStage') || 'the purpose fixed';
         const n = getNames();
         const r = v('reason') || 'illness';
-        
         const attendance = n 
             ? 'That ' + (isPlural() ? 'the accused/applicants, namely ' + n + ', are' : 'the accused/applicant ' + n + ' is') + " unable to appear before this Hon'ble Court due to " + r + '.'
             : "That the accused/applicant is unable to appear before this Hon'ble Court due to " + r + '.';
@@ -113,16 +105,18 @@ export const FRONTEND_JS = String.raw`
 
     function renderApplicants() {
         id('applicantBox').innerHTML = state.people.map((p, i) => 
-            '<div class="box"><div class="grid two"><div><label>Name ' + (i + 1) + '</label><input class="field applicant" data-i="' + i + '" placeholder="Name" value="' + esc(p.name) + '"></div>' +
-            '<div><label>Role</label><input class="field role" data-i="' + i + '" value="' + esc(p.role) + '"></div></div>' +
-            '<div class="actions"><button class="btn danger soft delApplicant" data-i="' + i + '">Remove</button></div></div>'
+            '<div class="applicant-row"><div class="grid two">' +
+            '<div><label>Applicant Name ' + (i + 1) + '</label><input class="field applicant" data-i="' + i + '" placeholder="Name" value="' + esc(p.name) + '"></div>' +
+            '<div><label>Role</label><div style="display:flex; gap:8px;"><input class="field role" data-i="' + i + '" value="' + esc(p.role) + '">' +
+            '<button class="btn ghost delApplicant" data-i="' + i + '" title="Remove">✕</button></div></div>' +
+            '</div></div>'
         ).join('');
     }
 
     function renderClauses() {
         id('clauseBox').innerHTML = state.clauses.map((c, i) => 
-            '<div class="box clause-box"><div class="clause-num">' + (i + 1) + '.</div><textarea class="field clauseText" data-i="' + i + '">' + esc(c) + '</textarea>' +
-            '<button class="btn danger soft icon-btn delClause" data-i="' + i + '" title="Remove">×</button></div>'
+            '<div class="clause-row"><div class="clause-num">' + (i + 1) + '.</div><textarea class="field clauseText" data-i="' + i + '">' + esc(c) + '</textarea>' +
+            '<button class="btn ghost delClause" data-i="' + i + '" title="Remove">✕</button></div>'
         ).join('');
     }
 
@@ -169,7 +163,7 @@ export const FRONTEND_JS = String.raw`
         ).join('');
 
         const innerStyles = 'font-size: ' + fontSize + '; line-height: ' + lineSpacing + ';';
-        const stampHtml = showStamp ? '<div class="stamp-box">Court Fee<br>Stamp</div>' : '';
+        const stampHtml = showStamp ? '<div class="stamp-box">Court Fee Ticket</div>' : '';
 
         id('paper').innerHTML = 
             '<div class="paper-inner" style="' + innerStyles + '">' +
@@ -196,7 +190,6 @@ export const FRONTEND_JS = String.raw`
     }
 
     // --- Core PDF Engines ---
-
     function wordWrap(text, maxChars) {
         const words = text.split(/\s+/);
         const lines = [];
@@ -205,9 +198,7 @@ export const FRONTEND_JS = String.raw`
             if ((current + w).length > maxChars) {
                 lines.push(current.trim());
                 current = w + ' ';
-            } else {
-                current += w + ' ';
-            }
+            } else { current += w + ' '; }
         });
         if (current) lines.push(current.trim());
         return lines;
@@ -215,19 +206,16 @@ export const FRONTEND_JS = String.raw`
 
     function generateRealPdf() {
         const texts = [];
-        let y = 72; // Start from top margin
-        const showStamp = id('stampSpace').checked;
+        let y = 72; // Strict Top Line Margin (1 inch)
         const isCompact = v('layoutStyle') === 'compact';
         const fontSize = isCompact ? 12 : 13;
-        const lh = isCompact ? 18 : 22; // Line height
+        const lh = isCompact ? 18 : 22; 
         
-        if (showStamp) y += 50; // Push content down to leave space for stamp
-
         const addT = (x, t, b = false, a = 'left') => { texts.push({ x, y, t: cleanText(t), size: fontSize, bold: b, align: a }); };
         const line = (t, x = 72, b = false, a = 'left') => { addT(x, t, b, a); y += lh; };
         const center = (t, b = false) => { line(t, 306, b, 'center'); };
 
-        // Court Header
+        // Court Header (Front Line)
         v('court').split(/\n/).forEach(t => center(t.toUpperCase(), true));
         y += lh * 1.5;
 
@@ -249,7 +237,6 @@ export const FRONTEND_JS = String.raw`
         }
         y += lh;
 
-        // Subject & Body
         const subjLines = wordWrap(v('subject') || generateSubject(), 80);
         subjLines.forEach(l => line(l, 72, true));
         y += lh;
@@ -257,26 +244,19 @@ export const FRONTEND_JS = String.raw`
         line(v('salutation') || 'Respected Sir,');
         line('It is most respectfully submitted as follows:', 108);
 
-        // Clauses (with wrap)
         state.clauses.filter(c => cleanText(c)).forEach((c, i) => {
             const lines = wordWrap(c, 75);
             lines.forEach((l, idx) => {
-                if (idx === 0) {
-                    addT(72, (i + 1) + ')');
-                    line(l, 100);
-                } else {
-                    line(l, 100);
-                }
+                if (idx === 0) { addT(72, (i + 1) + ')'); line(l, 100); } 
+                else { line(l, 100); }
             });
         });
         y += (lh / 2);
 
-        // Prayer
         const prayerLines = wordWrap(v('prayer') || generatePrayer(), 75);
         prayerLines.forEach(l => line(l, 100));
         y += lh * 2;
 
-        // Signatures
         addT(72, 'Place: ' + (v('place') || '_____'));
         addT(540, 'Submitted By,', true, 'right');
         y += lh;
@@ -288,7 +268,6 @@ export const FRONTEND_JS = String.raw`
         addT(540, '(' + (isPlural() ? 'Accused/applicants' : 'Accused/applicant') + ')', false, 'right');
         y += lh * 2;
 
-        // Counsel
         const cProps = v('counsel').split('|');
         let cLine = cProps[1] || '';
         if (id('duty').checked) cLine = cLine.replace(/\.?$/, '') + ' (Duty).';
@@ -309,16 +288,96 @@ export const FRONTEND_JS = String.raw`
 
         setTimeout(() => {
             const c = document.createElement('canvas');
-            const scale = 2; // High-res canvas
-            c.width = 612 * scale;  // Legal width
-            c.height = 1008 * scale; // Legal height
+            const scale = 2;
+            c.width = 612 * scale;
+            c.height = 1008 * scale;
             const ctx = c.getContext('2d');
             
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, c.width, c.height);
             ctx.scale(scale, scale);
             
-            drawCanvasContent(ctx);
+            const isCompact = v('layoutStyle') === 'compact';
+            const fontSize = isCompact ? 12 : 13;
+            const lh = isCompact ? 18 : 22;
+            let y = 72;
+            
+            ctx.fillStyle = '#111';
+            ctx.textBaseline = 'top';
+
+            const setFont = (b, s) => { ctx.font = (b ? 'bold ' : '') + (s || fontSize) + 'px "Times New Roman", Times, serif'; };
+            const write = (t, x, align = 'left', maxW) => {
+                ctx.textAlign = align;
+                ctx.fillText(t, x, y, maxW);
+            };
+
+            setFont(true, fontSize + 1);
+            v('court').split(/\n/).forEach(t => { write(t.toUpperCase(), 306, 'center', 500); y += lh; });
+            y += lh;
+
+            setFont(true, fontSize);
+            write(v('leftParty') || 'State/Complainant', 72, 'left');
+            write('v/s', 306, 'center');
+            write(v('rightParty') || 'Accused/Respondent', 540, 'right');
+            y += lh;
+
+            setFont(false, fontSize);
+            if (v('caseMode') === 'appeal') {
+                setFont(true, fontSize);
+                if (v('caseType')) { write(v('caseType'), 306, 'center'); y += lh; }
+                if (v('caseNumber')) { write(v('caseNumber'), 306, 'center'); y += lh; }
+            } else {
+                const arr = [];
+                if (v('firNumber') || v('firDate')) arr.push('FIR No. ' + (v('firNumber') || '_____') + (v('firDate') ? ' dated ' + v('firDate') : ''));
+                if (v('sections')) arr.push('U/s ' + v('sections'));
+                if (v('policeStation')) arr.push('PS ' + v('policeStation'));
+                arr.forEach(a => { write(a, 306, 'center'); y += lh; });
+            }
+            y += lh;
+
+            setFont(true, fontSize);
+            const subjLines = wordWrap(v('subject') || generateSubject(), 80);
+            subjLines.forEach(l => { write(l, 72); y += lh; });
+            y += lh;
+
+            setFont(false, fontSize);
+            write(v('salutation') || 'Respected Sir,', 72); y += lh;
+            write('It is most respectfully submitted as follows:', 108); y += lh;
+
+            state.clauses.filter(c => cleanText(c)).forEach((c, i) => {
+                const lines = wordWrap(c, 75);
+                lines.forEach((l, idx) => {
+                    if (idx === 0) { write((i + 1) + ')', 72); write(l, 100); } 
+                    else { write(l, 100); }
+                    y += lh;
+                });
+            });
+            y += lh / 2;
+
+            const prayerLines = wordWrap(v('prayer') || generatePrayer(), 75);
+            prayerLines.forEach(l => { write(l, 100); y += lh; });
+            y += lh * 2;
+
+            write('Place: ' + (v('place') || '_____'), 72);
+            setFont(true, fontSize);
+            write('Submitted By,', 540, 'right'); y += lh;
+            setFont(false, fontSize);
+            write('Date: ' + (v('date') || '_____'), 72); y += lh * 2.5;
+
+            setFont(true, fontSize);
+            write(getApplicantText(), 540, 'right'); y += lh;
+            setFont(false, fontSize);
+            write('(' + (isPlural() ? 'Accused/applicants' : 'Accused/applicant') + ')', 540, 'right'); y += lh * 2;
+
+            const cProps = v('counsel').split('|');
+            let cLine = cProps[1] || '';
+            if (id('duty').checked) cLine = cLine.replace(/\.?$/, '') + ' (Duty).';
+
+            write('Through Counsel', 306, 'center'); y += lh * 1.5;
+            setFont(true, fontSize);
+            write(cProps[0], 306, 'center'); y += lh;
+            setFont(false, fontSize);
+            write(cLine, 306, 'center');
             
             const jpegData = c.toDataURL('image/jpeg', 0.95);
             p.style.transform = oldTrans;
@@ -328,93 +387,6 @@ export const FRONTEND_JS = String.raw`
         }, 100);
     }
 
-    function drawCanvasContent(ctx) {
-        const isCompact = v('layoutStyle') === 'compact';
-        const fontSize = isCompact ? 12 : 13;
-        const lh = isCompact ? 18 : 22;
-        let y = 72;
-        
-        ctx.fillStyle = '#111';
-        ctx.textBaseline = 'top';
-
-        const setFont = (b, s) => { ctx.font = (b ? 'bold ' : '') + (s || fontSize) + 'px "Times New Roman", Times, serif'; };
-        const write = (t, x, align = 'left', maxW) => {
-            ctx.textAlign = align;
-            ctx.fillText(t, x, y, maxW);
-        };
-
-        if (id('stampSpace').checked) y += 50;
-
-        setFont(true, fontSize + 1);
-        v('court').split(/\n/).forEach(t => { write(t.toUpperCase(), 306, 'center', 468); y += lh; });
-        y += lh;
-
-        setFont(true, fontSize);
-        write(v('leftParty') || 'State/Complainant', 72, 'left');
-        write('v/s', 306, 'center');
-        write(v('rightParty') || 'Accused/Respondent', 540, 'right');
-        y += lh;
-
-        setFont(false, fontSize);
-        if (v('caseMode') === 'appeal') {
-            setFont(true, fontSize);
-            if (v('caseType')) { write(v('caseType'), 306, 'center'); y += lh; }
-            if (v('caseNumber')) { write(v('caseNumber'), 306, 'center'); y += lh; }
-        } else {
-            const arr = [];
-            if (v('firNumber') || v('firDate')) arr.push('FIR No. ' + (v('firNumber') || '_____') + (v('firDate') ? ' dated ' + v('firDate') : ''));
-            if (v('sections')) arr.push('U/s ' + v('sections'));
-            if (v('policeStation')) arr.push('PS ' + v('policeStation'));
-            arr.forEach(a => { write(a, 306, 'center'); y += lh; });
-        }
-        y += lh;
-
-        setFont(true, fontSize);
-        const subjLines = wordWrap(v('subject') || generateSubject(), 80);
-        subjLines.forEach(l => { write(l, 72); y += lh; });
-        y += lh;
-
-        setFont(false, fontSize);
-        write(v('salutation') || 'Respected Sir,', 72); y += lh;
-        write('It is most respectfully submitted as follows:', 108); y += lh;
-
-        state.clauses.filter(c => cleanText(c)).forEach((c, i) => {
-            const lines = wordWrap(c, 75);
-            lines.forEach((l, idx) => {
-                if (idx === 0) { write((i + 1) + ')', 72); write(l, 100); } 
-                else { write(l, 100); }
-                y += lh;
-            });
-        });
-        y += lh / 2;
-
-        const prayerLines = wordWrap(v('prayer') || generatePrayer(), 75);
-        prayerLines.forEach(l => { write(l, 100); y += lh; });
-        y += lh * 2;
-
-        write('Place: ' + (v('place') || '_____'), 72);
-        setFont(true, fontSize);
-        write('Submitted By,', 540, 'right'); y += lh;
-        setFont(false, fontSize);
-        write('Date: ' + (v('date') || '_____'), 72); y += lh * 2.5;
-
-        setFont(true, fontSize);
-        write(getApplicantText(), 540, 'right'); y += lh;
-        setFont(false, fontSize);
-        write('(' + (isPlural() ? 'Accused/applicants' : 'Accused/applicant') + ')', 540, 'right'); y += lh * 2;
-
-        const cProps = v('counsel').split('|');
-        let cLine = cProps[1] || '';
-        if (id('duty').checked) cLine = cLine.replace(/\.?$/, '') + ' (Duty).';
-
-        write('Through Counsel', 306, 'center'); y += lh * 1.5;
-        setFont(true, fontSize);
-        write(cProps[0], 306, 'center'); y += lh;
-        setFont(false, fontSize);
-        write(cLine, 306, 'center');
-    }
-
-    // --- Core PDF Assembler (100% Valid Object Graph) ---
     function compilePdfOutput(texts, jpegData, filename) {
         const objs = [];
         let content = '';
@@ -428,7 +400,7 @@ export const FRONTEND_JS = String.raw`
         } else {
             const escapePdf = s => s.replace(/[\\]/g, '\\\\').replace(/[\(\)]/g, '\\$&');
             texts.forEach(o => {
-                const tw = (o.t.length * o.size * 0.45); // Approximate width
+                const tw = (o.t.length * o.size * 0.45);
                 let x = o.x;
                 if (o.align === 'center') x -= tw / 2;
                 if (o.align === 'right') x -= tw;
@@ -441,13 +413,7 @@ export const FRONTEND_JS = String.raw`
 
         objs.push('<< /Length ' + contentU8.length + ' >>\nstream\n' + content + '\nendstream');
         
-        const cId = objs.length;
-        const pId = cId + 1;
-        const psId = cId + 2;
-        const catId = cId + 3;
-        const f1Id = cId + 4;
-        const f2Id = cId + 5;
-
+        const cId = objs.length, pId = cId + 1, psId = cId + 2, catId = cId + 3, f1Id = cId + 4, f2Id = cId + 5;
         const resDict = jpegData 
             ? '<< /Font << /F1 ' + f1Id + ' 0 R /F2 ' + f2Id + ' 0 R >> /XObject << /Im1 ' + imgId + ' 0 R >> >>'
             : '<< /Font << /F1 ' + f1Id + ' 0 R /F2 ' + f2Id + ' 0 R >> >>';
@@ -461,11 +427,7 @@ export const FRONTEND_JS = String.raw`
         let pdfData = '%PDF-1.4\n';
         const xref = [0];
 
-        objs.forEach((o, i) => {
-            xref.push(pdfData.length);
-            pdfData += (i + 1) + ' 0 obj\n' + o + '\nendobj\n';
-        });
-
+        objs.forEach((o, i) => { xref.push(pdfData.length); pdfData += (i + 1) + ' 0 obj\n' + o + '\nendobj\n'; });
         const startXref = pdfData.length;
         pdfData += 'xref\n0 ' + (objs.length + 1) + '\n0000000000 65535 f \n';
         xref.slice(1).forEach(x => { pdfData += String(x).padStart(10, '0') + ' 00000 n \n'; });
@@ -530,229 +492,186 @@ export const FRONTEND_JS = String.raw`
 
     function toggleView(v) {
         document.body.className = v === 'preview' ? 'view-preview' : 'view-form';
-        id('formTab').classList.toggle('on', v !== 'preview');
-        id('previewTab').classList.toggle('on', v === 'preview');
+        id('formTab').classList.toggle('active', v !== 'preview');
+        id('previewTab').classList.toggle('active', v === 'preview');
         fitPreview();
     }
 
     function fitPreview() {
-        const pw = window.innerWidth < 1120 ? window.innerWidth - 32 : (window.innerWidth - 480) - 64;
-        state.zoom = Math.min(1, Math.max(0.3, pw / 612));
+        const isDesktop = window.innerWidth >= 900;
+        const availWidth = isDesktop ? window.innerWidth - 450 - 48 : window.innerWidth - 32;
+        state.zoom = Math.min(1, Math.max(0.2, availWidth / 612));
         document.documentElement.style.setProperty('--z', state.zoom);
     }
 
-    // --- HTML Template ---
+    // --- HTML Template (Utilitarian, Professional) ---
     function getHTML() {
         return [
-            '<header class="topbar">',
-            '    <div class="brand">',
-            '        <div class="logo">PW</div>',
-            '        <div class="brand-text">',
-            '            <h1 class="title">PdfWriter</h1>',
-            '            <span class="sub">Professional Legal Engine</span>',
-            '        </div>',
+            '<div class="app-header">',
+            '    <div class="app-title">PDFWriter <span>Legal</span></div>',
+            '    <div class="mobile-tabs">',
+            '        <button id="formTab" class="active">Editor</button>',
+            '        <button id="previewTab">Preview</button>',
             '    </div>',
-            '    <div class="tabs">',
-            '        <button id="formTab" class="on">Data Entry</button>',
-            '        <button id="previewTab">Document Preview</button>',
-            '    </div>',
-            '</header>',
+            '</div>',
             '',
-            '<main class="layout">',
-            '    <section class="panel form-panel">',
+            '<div class="layout">',
+            '    <div class="panel form-panel">',
             '        ',
-            '        <div class="card">',
-            '            <div class="card-header">',
-            '                <h2><span class="badge">1</span> Document Settings</h2>',
+            '        <div class="section-title">Document Setup</div>',
+            '        <div class="grid two">',
+            '            <div>',
+            '                <label>Template Proforma</label>',
+            '                <select id="proforma" class="field"></select>',
             '            </div>',
-            '            <div class="grid two">',
-            '                <div>',
-            '                    <label>Template</label>',
-            '                    <select id="proforma" class="field"></select>',
-            '                </div>',
-            '                <div>',
-            '                    <label>Layout Style</label>',
-            '                    <select id="layoutStyle" class="field">',
-            '                        <option value="standard">Standard Legal (13pt, 1.5 Spacing)</option>',
-            '                        <option value="compact">Compact Mode (12pt, 1.15 Spacing)</option>',
-            '                    </select>',
-            '                </div>',
-            '            </div>',
-            '            <label class="check-wrap" style="margin-top:12px;">',
-            '                <input type="checkbox" id="stampSpace" checked> Leave top-right space for Court Fee Stamp',
-            '            </label>',
-            '        </div>',
-            '',
-            '        <div class="card">',
-            '            <div class="card-header">',
-            '                <h2><span class="badge">2</span> Case Details</h2>',
-            '            </div>',
-            '            <label>Court Name</label>',
-            '            <select id="court" class="field"></select>',
-            '            ',
-            '            <div class="grid two">',
-            '                <div><label>Complainant / State</label><input id="leftParty" class="field" placeholder="State"></div>',
-            '                <div><label>Accused / Respondent</label><input id="rightParty" class="field" placeholder="Accused Name"></div>',
-            '            </div>',
-            '',
-            '            <label>Case Type Category</label>',
-            '            <select id="caseMode" class="field">',
-            '                <option value="fir">FIR Based (State Case)</option>',
-            '                <option value="appeal">Complaint / Appeal / NACT</option>',
-            '            </select>',
-            '',
-            '            <div id="firFields" class="grid two">',
-            '                <div><label>FIR Number</label><input id="firNumber" class="field" placeholder="e.g. 112"></div>',
-            '                <div><label>Date</label><input id="firDate" class="field" placeholder="DD.MM.YYYY"></div>',
-            '                <div><label>Sections</label><input id="sections" class="field" placeholder="e.g. 302 IPC"></div>',
-            '                <div><label>Police Station</label><input id="policeStation" class="field" placeholder="e.g. City Fazilka"></div>',
-            '            </div>',
-            '',
-            '            <div id="appealFields" class="grid two hidden">',
-            '                <div><label>Type</label><input id="caseType" class="field" placeholder="e.g. NACT"></div>',
-            '                <div><label>Number/Year</label><input id="caseNumber" class="field" placeholder="e.g. 123/2024"></div>',
+            '            <div>',
+            '                <label>Line Spacing</label>',
+            '                <select id="layoutStyle" class="field">',
+            '                    <option value="standard">Standard Legal (13pt)</option>',
+            '                    <option value="compact">Compact (12pt)</option>',
+            '                </select>',
             '            </div>',
             '        </div>',
+            '        <label class="checkbox-label" style="margin-top:12px;">',
+            '            <input type="checkbox" id="stampSpace" checked> Show Court Fee Stamp indicator',
+            '        </label>',
             '',
-            '        <div class="card">',
-            '            <div class="card-header">',
-            '                <h2><span class="badge">3</span> Applicant(s)</h2>',
-            '                <button id="addApplicant" class="btn secondary small">+ Add Person</button>',
-            '            </div>',
-            '            <div id="applicantBox" class="stack"></div>',
+            '        <div class="section-title">Case Information</div>',
+            '        <label>Court Presiding Officer</label>',
+            '        <select id="court" class="field"></select>',
+            '        ',
+            '        <div class="grid two">',
+            '            <div><label>State / Complainant</label><input id="leftParty" class="field" placeholder="State"></div>',
+            '            <div><label>Accused / Respondent</label><input id="rightParty" class="field" placeholder="Accused Name"></div>',
             '        </div>',
             '',
-            '        <div class="card">',
-            '            <div class="card-header">',
-            '                <h2><span class="badge">4</span> Legal Draft</h2>',
-            '            </div>',
-            '            <label>Absence Reason</label>',
-            '            <input id="reason" class="field" placeholder="illness">',
-            '            <label>Stage of Case</label>',
-            '            <input id="caseStage" class="field" placeholder="prosecution evidence">',
-            '            <label>Subject Line</label>',
-            '            <textarea id="subject" class="field" rows="2"></textarea>',
-            '            ',
-            '            <label>Draft Clauses</label>',
-            '            <div id="clauseBox" class="stack"></div>',
-            '            <button id="addClause" class="btn secondary dashed" style="width:100%; margin-top:8px;">+ Add Custom Clause</button>',
+            '        <label>Proceeding Type</label>',
+            '        <select id="caseMode" class="field">',
+            '            <option value="fir">FIR / State Case</option>',
+            '            <option value="appeal">Complaint / Appeal</option>',
+            '        </select>',
             '',
-            '            <label style="margin-top:16px;">Prayer (Conclusion)</label>',
-            '            <textarea id="prayer" class="field" rows="3"></textarea>',
+            '        <div id="firFields" class="grid two">',
+            '            <div><label>FIR No.</label><input id="firNumber" class="field"></div>',
+            '            <div><label>Date</label><input id="firDate" class="field"></div>',
+            '            <div><label>Sections</label><input id="sections" class="field"></div>',
+            '            <div><label>Police Station</label><input id="policeStation" class="field"></div>',
             '        </div>',
             '',
-            '        <div class="card" style="margin-bottom:80px;">',
-            '            <div class="card-header">',
-            '                <h2><span class="badge">5</span> Signatures & Counsel</h2>',
-            '            </div>',
-            '            <div class="grid two">',
-            '                <div><label>Place</label><input id="place" class="field" placeholder="Fazilka" value="Fazilka"></div>',
-            '                <div><label>Date</label><input id="date" class="field" placeholder="DD.MM.YYYY"></div>',
-            '            </div>',
-            '            <div class="grid two">',
-            '                <div>',
-            '                    <label>Salutation</label>',
-            '                    <select id="salutation" class="field">',
-            '                        <option>Respected Sir,</option>',
-            '                        <option>Respected Madam,</option>',
-            '                    </select>',
-            '                </div>',
-            '                <div>',
-            '                    <label>Filing Counsel</label>',
-            '                    <select id="counsel" class="field"></select>',
-            '                </div>',
-            '            </div>',
-            '            <label class="check-wrap" style="margin-top:12px;">',
-            '                <input id="duty" type="checkbox"> Append (Duty) to Counsel Title',
-            '            </label>',
+            '        <div id="appealFields" class="grid two hidden">',
+            '            <div><label>Case Type</label><input id="caseType" class="field" placeholder="e.g. NACT"></div>',
+            '            <div><label>Number/Year</label><input id="caseNumber" class="field" placeholder="e.g. 123/2024"></div>',
             '        </div>',
-            '    </section>',
             '',
-            '    <section class="panel preview-panel">',
-            '        <div class="preview-toolbar">',
-            '            <span class="status-dot"></span> Live Preview (Legal Size)',
+            '        <div class="section-title">Applicants <button id="addApplicant" class="btn text-btn">Add Person</button></div>',
+            '        <div id="applicantBox" class="stack"></div>',
+            '',
+            '        <div class="section-title">Draft Body</div>',
+            '        <div class="grid two">',
+            '            <div><label>Reason for Absence</label><input id="reason" class="field" placeholder="illness"></div>',
+            '            <div><label>Stage of Case</label><input id="caseStage" class="field" placeholder="evidence"></div>',
             '        </div>',
+            '        <label>Subject</label>',
+            '        <textarea id="subject" class="field" rows="2"></textarea>',
+            '        ',
+            '        <label>Clauses</label>',
+            '        <div id="clauseBox" class="stack"></div>',
+            '        <button id="addClause" class="btn outline-btn" style="width:100%; margin-top:8px;">+ Add Custom Clause</button>',
+            '',
+            '        <label style="margin-top:16px;">Prayer</label>',
+            '        <textarea id="prayer" class="field" rows="3"></textarea>',
+            '',
+            '        <div class="section-title">Signatures & Execution</div>',
+            '        <div class="grid two">',
+            '            <div><label>Place</label><input id="place" class="field" placeholder="Fazilka" value="Fazilka"></div>',
+            '            <div><label>Date</label><input id="date" class="field" placeholder="DD.MM.YYYY"></div>',
+            '            <div>',
+            '                <label>Salutation</label>',
+            '                <select id="salutation" class="field">',
+            '                    <option>Respected Sir,</option>',
+            '                    <option>Respected Madam,</option>',
+            '                </select>',
+            '            </div>',
+            '            <div>',
+            '                <label>Filing Counsel</label>',
+            '                <select id="counsel" class="field"></select>',
+            '            </div>',
+            '        </div>',
+            '        <label class="checkbox-label" style="margin-top:12px; margin-bottom: 30px;">',
+            '            <input id="duty" type="checkbox"> Append (Duty) to Counsel Title',
+            '        </label>',
+            '    </div>',
+            '',
+            '    <div class="panel preview-panel">',
             '        <div class="paper-stage">',
             '            <div id="paper" class="paper"></div>',
             '        </div>',
-            '    </section>',
-            '</main>',
+            '    </div>',
+            '</div>',
             '',
-            '<footer class="action-bar">',
-            '    <button id="realPdfBtn" class="btn primary">Generate Raw PDF</button>',
-            '    <button id="scanPdfBtn" class="btn dark">Generate Scanned PDF</button>',
-            '</footer>'
+            '<div class="action-bar">',
+            '    <button id="scanPdfBtn" class="btn secondary">Scanned PDF</button>',
+            '    <button id="realPdfBtn" class="btn primary">Export Raw PDF</button>',
+            '</div>'
         ].join('\n');
     }
 
-    // --- CSS Template (Modern & Minimalist) ---
+    // --- CSS Template (Native/System UI) ---
     function getCSS() {
         return [
-            ':root { --z: 0.5; --primary: #0f172a; --bg: #f1f5f9; --border: #cbd5e1; --surface: #ffffff; }',
-            '* { box-sizing: border-box; font-family: "Inter", sans-serif; margin: 0; padding: 0; }',
-            'body { background: var(--bg); color: #334155; height: 100vh; overflow: hidden; }',
+            ':root { --z: 0.5; --bg: #f3f3f3; --surface: #ffffff; --border: #d1d1d1; --text: #1a1a1a; --text-muted: #555555; --accent: #0060df; }',
+            '* { box-sizing: border-box; margin: 0; padding: 0; }',
+            'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); overflow: hidden; height: 100dvh; display: flex; flex-direction: column; }',
             '',
-            '.topbar { height: 64px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 10; position: relative; }',
-            '.brand { display: flex; align-items: center; gap: 12px; }',
-            '.logo { background: var(--primary); color: white; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 8px; font-weight: 700; letter-spacing: -1px; }',
-            '.title { font-size: 16px; font-weight: 700; color: #0f172a; }',
-            '.sub { font-size: 12px; color: #64748b; font-weight: 500; }',
+            '.app-header { background: #e0e0e0; border-bottom: 1px solid var(--border); padding: 0 16px; height: 48px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }',
+            '.app-title { font-weight: 700; font-size: 15px; letter-spacing: -0.3px; }',
+            '.app-title span { font-weight: 400; color: var(--text-muted); }',
             '',
-            '.tabs { display: flex; background: var(--bg); padding: 4px; border-radius: 8px; }',
-            '.tabs button { border: none; background: transparent; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #64748b; cursor: pointer; transition: all 0.2s; }',
-            '.tabs button.on { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }',
+            '.mobile-tabs { display: flex; gap: 4px; }',
+            '.mobile-tabs button { background: transparent; border: 1px solid transparent; padding: 4px 12px; border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; }',
+            '.mobile-tabs button.active { background: var(--surface); border-color: var(--border); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }',
             '',
-            '.layout { display: grid; grid-template-columns: 1fr; height: calc(100vh - 64px); }',
-            '.panel { overflow-y: auto; height: 100%; }',
+            '.layout { display: flex; flex: 1; overflow: hidden; }',
+            '.panel { overflow-y: auto; height: 100%; -webkit-overflow-scrolling: touch; }',
+            '.form-panel { background: var(--surface); padding: 16px 20px 80px 20px; flex: 1; border-right: 1px solid var(--border); }',
+            '.preview-panel { background: #c8c8c8; flex: 1; position: relative; }',
             '',
-            '.form-panel { padding: 24px; background: #fafafa; }',
-            '.preview-panel { background: #e2e8f0; position: relative; }',
-            '',
-            '.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }',
-            '.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }',
-            '.card-header h2 { font-size: 14px; font-weight: 600; color: #0f172a; display: flex; align-items: center; gap: 8px; }',
-            '.badge { background: #e2e8f0; color: #475569; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; }',
+            '.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); border-bottom: 1px solid #e5e5e5; padding-bottom: 6px; margin: 24px 0 16px 0; display: flex; justify-content: space-between; align-items: center; }',
+            '.section-title:first-child { margin-top: 4px; }',
             '',
             '.grid { display: grid; gap: 12px; }',
             '.grid.two { grid-template-columns: 1fr; }',
             '.stack { display: flex; flex-direction: column; gap: 12px; }',
             '',
-            'label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin: 12px 0 6px 0; }',
-            '.field { width: 100%; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; color: #0f172a; transition: border 0.2s; outline: none; }',
-            '.field:focus { border-color: #3b82f6; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }',
-            'textarea.field { resize: vertical; min-height: 40px; }',
+            'label { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin: 10px 0 4px 0; }',
+            '.field { width: 100%; background: #ffffff; border: 1px solid #a0a0a0; border-radius: 3px; padding: 8px 10px; font-size: 13px; font-family: inherit; color: var(--text); outline: none; transition: border-color 0.1s; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); }',
+            '.field:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0, 96, 223, 0.2); }',
+            'select.field { appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 10px top 50%; background-size: 10px auto; padding-right: 28px; }',
+            'textarea.field { resize: vertical; min-height: 50px; line-height: 1.4; }',
             '',
-            '.btn { border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }',
-            '.btn.primary { background: #3b82f6; color: white; padding: 12px 24px; }',
-            '.btn.primary:hover { background: #2563eb; }',
-            '.btn.dark { background: var(--primary); color: white; padding: 12px 24px; }',
-            '.btn.dark:hover { background: #1e293b; }',
-            '.btn.secondary { background: #f1f5f9; color: #334155; padding: 8px 16px; border: 1px solid var(--border); }',
-            '.btn.secondary.dashed { border-style: dashed; background: transparent; }',
-            '.btn.secondary:hover { background: #e2e8f0; }',
-            '.btn.danger { color: #ef4444; }',
-            '.btn.soft { background: #fef2f2; border: 1px solid #fecaca; }',
-            '.btn.soft:hover { background: #fee2e2; }',
-            '.btn.small { padding: 4px 10px; font-size: 11px; }',
-            '.icon-btn { width: 28px; height: 28px; padding: 0; font-size: 16px; }',
+            '.btn { border: none; border-radius: 4px; font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; display: inline-flex; justify-content: center; align-items: center; min-height: 36px; padding: 0 16px; }',
+            '.btn.primary { background: var(--accent); color: white; border: 1px solid #004ba8; }',
+            '.btn.primary:active { background: #004ba8; }',
+            '.btn.secondary { background: #f3f3f3; color: var(--text); border: 1px solid var(--border); }',
+            '.btn.secondary:active { background: #e5e5e5; }',
+            '.btn.outline-btn { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }',
+            '.btn.text-btn { background: transparent; color: var(--accent); min-height: auto; padding: 0; font-size: 12px; font-weight: 600; }',
+            '.btn.ghost { background: transparent; color: #d32f2f; min-height: 36px; width: 36px; padding: 0; border: 1px solid transparent; font-size: 14px; }',
+            '.btn.ghost:hover { background: #ffebee; border-color: #ffcdd2; }',
             '',
-            '.box { padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }',
-            '.clause-box { display: flex; gap: 8px; align-items: flex-start; }',
-            '.clause-num { font-weight: 600; color: #64748b; font-size: 13px; padding-top: 10px; }',
+            '.applicant-row, .clause-row { display: flex; gap: 8px; align-items: flex-start; padding: 10px; background: #fafafa; border: 1px solid #eaeaea; border-radius: 4px; }',
+            '.clause-row .clause-num { font-weight: 600; color: var(--text-muted); padding-top: 8px; font-size: 13px; width: 20px; text-align: right; }',
             '',
-            '.check-wrap { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; cursor: pointer; }',
+            '.checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; cursor: pointer; margin: 0; }',
             '.hidden { display: none !important; }',
             '',
-            '.preview-toolbar { background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); padding: 12px 24px; font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px; position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--border); }',
-            '.status-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; }',
+            '.paper-stage { padding: 24px; display: flex; justify-content: center; transform-origin: top center; min-height: 100%; }',
+            '.paper { background: white; width: 612px; min-height: 1008px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transform: scale(var(--z)); transform-origin: top center; }',
             '',
-            '.paper-stage { padding: 40px; display: flex; justify-content: center; transform-origin: top center; min-height: 100%; }',
-            '.paper { background: white; width: 612px; min-height: 1008px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); transform: scale(var(--z)); transform-origin: top center; }',
-            '',
-            '/* Inside Paper Styles (Legal Print Formatting) */',
-            '.paper-inner { padding: 72px 72px 72px 72px; font-family: "Times New Roman", Times, serif; color: #000; position: relative; }',
-            '.stamp-box { position: absolute; top: 40px; right: 40px; width: 120px; height: 120px; border: 1px dashed #94a3b8; color: #94a3b8; display: grid; place-items: center; text-align: center; font-family: sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }',
-            '.court { text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 24px; }',
+            '/* PDF Legal Print Formatting */',
+            '.paper-inner { padding: 72px; font-family: "Times New Roman", Times, serif; color: #000; position: relative; }',
+            '.stamp-box { position: absolute; top: 30px; right: 40px; width: 100px; height: 120px; border: 1px solid #000; color: #000; display: flex; align-items: center; justify-content: center; text-align: center; font-family: sans-serif; font-size: 10px; font-weight: bold; background: repeating-linear-gradient(45deg, #fff, #fff 5px, #f4f4f4 5px, #f4f4f4 10px); }',
+            '.court { text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 24px; position: relative; z-index: 2; }',
             '.case-grid { margin-bottom: 24px; font-weight: bold; position: relative; }',
             '.case-left { width: 45%; float: left; }',
             '.case-right { width: 45%; float: right; text-align: right; }',
@@ -765,7 +684,7 @@ export const FRONTEND_JS = String.raw`
             '.intro { margin-bottom: 16px; margin-left: 36px; }',
             '',
             '.clause { display: flex; margin-bottom: 12px; }',
-            '.clause .clause-num { width: 28px; flex-shrink: 0; padding: 0; font-weight: normal; color: #000; font-size: inherit; }',
+            '.clause .clause-num { width: 28px; flex-shrink: 0; font-weight: normal; color: #000; }',
             '.clause .clause-text { text-align: justify; }',
             '',
             '.prayer { margin: 24px 0 40px 36px; text-align: justify; }',
@@ -777,18 +696,19 @@ export const FRONTEND_JS = String.raw`
             '.counsel-label { text-align: center; margin-bottom: 30px; }',
             '.counsel-details { text-align: center; }',
             '',
-            '.action-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding: 12px 24px; display: flex; justify-content: flex-end; gap: 12px; z-index: 20; }',
+            '.action-bar { background: var(--surface); border-top: 1px solid var(--border); padding: 12px 16px; display: flex; justify-content: flex-end; gap: 12px; z-index: 20; flex-shrink: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.03); }',
             '',
             '.exporting .paper { transform: none !important; box-shadow: none !important; }',
             '',
-            '@media (max-width: 1119px) {',
+            '@media (max-width: 899px) {',
             '    .view-preview .form-panel { display: none; }',
             '    .view-form .preview-panel { display: none; }',
-            '    .tabs { display: flex; }',
+            '    .action-bar { justify-content: space-between; padding: 12px; }',
+            '    .btn { min-height: 44px; flex: 1; } /* Mobile touch target size */',
             '}',
-            '@media (min-width: 1120px) {',
-            '    .layout { grid-template-columns: 480px 1fr; }',
-            '    .tabs { display: none; }',
+            '@media (min-width: 900px) {',
+            '    .mobile-tabs { display: none; }',
+            '    .form-panel { max-width: 450px; }',
             '    .grid.two { grid-template-columns: 1fr 1fr; }',
             '}'
         ].join('\n');
