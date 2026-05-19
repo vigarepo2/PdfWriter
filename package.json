@@ -1,7 +1,7 @@
 {
   "name": "pdfwriter",
-  "version": "3.5.0",
-  "description": "Mobile-first Cloudflare Worker for professional exemption application PDF drafting with advanced editor tools and split stable assets.",
+  "version": "3.5.1",
+  "description": "Mobile-first Cloudflare Worker for professional exemption application PDF drafting with advanced editor tools and fixed preview rendering.",
   "private": true,
   "type": "module",
   "scripts": {
