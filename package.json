@@ -1,19 +1,28 @@
 {
   "name": "pdfwriter",
-  "version": "20.0.0",
-  "description": "Professional government-portal style Cloudflare Worker for exemption application drafting, preview editing, and exact PDF export.",
+  "version": "21.0.0",
+  "description": "Minimal professional legal PDF studio with bundled frontend assets, raw selectable PDF export, and scanned locked PDF export.",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check src/worker.js",
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "build": "node scripts/build.mjs",
+    "check": "npm run build && node --check dist/server.js",
+    "dev": "npm run build && wrangler dev dist/server.js",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.4",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
+    "esbuild": "^0.25.12",
+    "prettier": "^3.6.2",
     "wrangler": "^4.18.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
-  "keywords": ["pdf", "cloudflare-worker", "legal-document", "jspdf", "html2canvas", "court-application", "government-portal-ui", "preview-editor", "rich-editor"]
+  "keywords": ["pdf", "cloudflare-worker", "legal-document", "jspdf", "html2canvas", "court-application", "minimal-ui", "bundled-assets"]
 }
