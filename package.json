@@ -1,16 +1,16 @@
 {
   "name": "pdfwriter",
-  "version": "2.1.0",
-  "description": "Minimal exemption application PDF generator with real text and scanned PDF export.",
+  "version": "3.0.0",
+  "description": "Professional exemption application PDF generator.",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check src/index.js && node --check frontend/index.js && node --check backend/index.js",
+    "check": "node --check src/index.js && node --check backend/index.js && node --check frontend/index.js",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"
   },
   "devDependencies": {
-    "wrangler": "^4.18.0"
+    "wrangler": "^3.0.0"
   },
   "engines": {
     "node": ">=20"
