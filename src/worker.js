@@ -1,2 +1,213 @@
-const HTML=`<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PdfWriter</title><script src=https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js></script><style>*{box-sizing:border-box}body{margin:0;background:#f3f6fb;font-family:system-ui,Arial;color:#111827}.top{position:sticky;top:0;background:white;padding:14px;border-bottom:1px solid #e5e7eb;z-index:10}.brand{font-size:24px;font-weight:900}.tabs{display:flex;gap:10px;margin-top:12px}.tabs button{flex:1;border:1px solid #d1d5db;border-radius:999px;padding:12px;font-weight:900;background:white}.tabs .on{background:#111827;color:white}.app{display:grid;gap:14px;padding:14px}.panel{background:white;border:1px solid #e5e7eb;border-radius:20px;overflow:hidden}.sec{padding:15px;border-top:1px solid #e5e7eb}.sec:first-child{border-top:0}.row{display:flex;justify-content:space-between;align-items:center}.row h2{font-size:12px;text-transform:uppercase;color:#334155;letter-spacing:.08em}.field{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:11px;margin-top:8px;font:inherit}.grid{display:grid;gap:10px}.btn{border:0;border-radius:12px;padding:11px 13px;font-weight:900}.dark{background:#111827;color:white}.light{background:white;border:1px solid #d1d5db}.card{background:#f8fafc;border:1px solid #e5e7eb;border-radius:14px;padding:10px;margin-top:8px}.sticky{position:sticky;bottom:0;background:white;padding:12px;border-top:1px solid #e5e7eb;display:flex;gap:8px;flex-wrap:wrap}.tools{padding:10px;border-bottom:1px solid #e5e7eb;display:flex;gap:6px;flex-wrap:wrap}.preview{overflow:auto;background:#eef2f7;padding:14px}.stage{min-width:816px;display:flex;justify-content:center;height:calc(1344px * var(--z,.44))}.paper{width:816px;min-height:1344px;background:white;box-shadow:0 20px 60px #0002;transform:scale(var(--z,.44));transform-origin:top center;color:#000}.paper.edit{outline:4px solid #60a5fa}.inner{padding:.68in .95in .68in 1.18in;font-family:'Times New Roman',serif;font-size:13pt;line-height:1.42}.court{text-align:center;font-weight:700;font-size:14pt;text-transform:uppercase}.stamp{height:104px}.case{width:100%;border-collapse:collapse;margin-bottom:22px}.case td{vertical-align:top}.l{width:32%;font-weight:700}.m{width:16%;text-align:center;font-weight:700}.r{width:52%;font-weight:700}.fir{padding-top:13px;font-weight:400}.subject{font-weight:700;text-decoration:underline;text-align:justify;margin:18px 0 20px}.para{width:100%;border-collapse:collapse;margin-bottom:12px}.para td:first-child{width:34px}.para td:last-child{text-align:justify}.prayer{text-indent:38px;text-align:justify;margin:22px 0 36px}.sig{width:100%;border-collapse:collapse;margin-top:28px}.sr{text-align:right;width:54%}.sn{display:inline-block;max-width:330px;text-align:right}.counsel{text-align:center;margin-top:52px;margin-left:-55px}.view-preview #editor{display:none}.view-editor #preview{display:none}@media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}@media(min-width:1024px){.top{display:none}.app{grid-template-columns:470px 1fr;height:100vh;padding:0;gap:0}.panel{border-radius:0}.editor,.previewPanel{height:100vh;overflow:auto}.view-preview #editor,.view-editor #preview{display:block}.stage{height:1344px}.paper{transform:none}}</style></head><body class=view-editor><div class=top><div class=brand>PdfWriter</div><div>EXEMPTION APPLICATION</div><div class=tabs><button id=te class=on>Editor</button><button id=tp>Preview</button></div></div><main class=app><section id=editor class="panel editor"><div class=sec><div class=row><h2>Court and title</h2><button id=opt class="btn light">Options</button></div><select id=court class=field><option>IN THE COURT OF SH. DHARMINDER PAUL SINGLA, SESSIONS JUDGE, FAZILKA</option><option>IN THE COURT OF SH. KRISHAN KUMAR SINGLA, ASJ, FAZILKA</option><option>IN THE COURT OF MRS. PAMELPREET GREWAL KAHAL, ASJ, FAZILKA</option><option>IN THE COURT OF MRS. PAMELPREET GREWAL KAHAL, JUDGE, SPECIAL COURT, FAZILKA</option><option selected>IN THE COURT OF SH. AJIT PAL SINGH, ASJ, FAZILKA</option><option>IN THE COURT OF SH. ATUL KAMBOJ, ASJ, FAZILKA</option><option>IN THE COURT OF SH. HARPREET SINGH, JMIC, FAZILKA</option><option>IN THE COURT OF MS. KARAMWINDER KAUR, JMIC, FAZILKA</option></select><div class=grid><input id=left class=field placeholder="State / Complainant"><input id=right class=field placeholder="Accused / Respondent"></div></div><div id=tools class=sec hidden><button id=exT class="btn light">Export template</button><button id=imT class="btn light">Import template</button><input id=file type=file hidden></div><div class=sec><h2>FIR details</h2><div class=grid><input id=fir class=field placeholder="FIR No."><input id=fdate class=field placeholder=Date><input id=secs class=field placeholder=Sections><input id=ps class=field placeholder="Police Station"></div></div><div class=sec><div class=row><h2>Accused/applicants</h2><button id=addP class="btn light">Add</button></div><div id=people></div></div><div class=sec><div class=row><h2>Text</h2><button id=reset class="btn light">Reset</button></div><textarea id=subj class=field></textarea><textarea id=pray class=field></textarea></div><div class=sec><div class=row><h2>Clauses</h2><button id=addC class="btn light">Add</button></div><div id=clauses></div></div><div class=sec><div class=grid><input id=place class=field placeholder=Place><input id=date class=field placeholder=Date></div><select id=counsel class=field><option>Baltej Singh Brar, Advocate|Chief, LADC, Fazilka.</option><option>Hardeep Singh Dhaliwal, Advocate|Deputy Chief, LADC, Fazilka.</option><option selected>Naazpreet Kaur, Advocate|Assistant, LADC, Fazilka.</option></select><label><input id=duty type=checkbox> Duty</label></div><div class=sticky><button id=download class="btn dark">Download exact PDF</button><button id=prevBtn class="btn light">Preview</button><button id=rebuild class="btn light">Rebuild preview</button></div></section><section id=preview class="panel previewPanel"><div class=tools><button id=edit class="btn light">✎ Edit</button><button data-c=bold class="btn light"><b>B</b></button><button data-c=italic class="btn light"><i>I</i></button><button data-c=underline class="btn light"><u>U</u></button><button data-c=justifyLeft class="btn light">L</button><button data-c=justifyCenter class="btn light">C</button><button data-c=justifyRight class="btn light">R</button><input id=color type=color><button id=pdf2 class="btn dark">PDF</button></div><div class=preview><div class=stage><div id=paper class=paper></div></div></div></section></main><script>let P=[{n:''}],C=[],dirty=false,editMode=false,ids=['court','left','right','fir','fdate','secs','ps','subj','pray','place','date','counsel','duty'];let $=x=>document.getElementById(x),V=x=>($(x).value||'').trim(),E=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));function names(){let a=P.map(p=>p.n.trim()).filter(Boolean);return a.length<2?(a[0]||''):a.length==2?a[0]+' and '+a[1]:a.slice(0,-1).join(', ')+' and '+a.at(-1)}function plural(){return P.filter(p=>p.n.trim()).length>1}function label(){return names()||V('right')||'Accused/applicant'}function subject(){let n=names();return 'Application for exemption of personal appearance'+(n?' of '+n:'')+'.'}function prayer(){return 'It is therefore respectfully prayed that, in view of the facts and circumstances stated above, the personal appearance of the '+(plural()?'above-named accused/applicants':'accused/applicant')+' may kindly be exempted for today only.'}function attend(){let n=names();return !n?"That the accused/applicant is unable to appear before this Hon'ble Court due to illness.":'That '+(plural()?'the accused/applicants, namely '+n+', are':'the accused/applicant '+n+' is')+" unable to appear before this Hon'ble Court due to illness."}function resetText(){$('subj').value=subject();$('pray').value=prayer();C=["That the above noted case is pending before this Hon'ble Court and is fixed for today.",attend(),'That the absence is neither willful nor intentional, but due to the reason stated above.'];drawC();render(true)}function drawP(){people.innerHTML=P.map((p,i)=>'<div class=card><input class=field data-i='+i+' placeholder=Name value="'+E(p.n)+'"><button class="btn light delP" data-i='+i+'>Delete</button></div>').join('')}function drawC(){clauses.innerHTML=C.map((c,i)=>'<div class=card><textarea class=field data-i='+i+'>'+E(c)+'</textarea><button class="btn light delC" data-i='+i+'>Delete</button></div>').join('')}function firHTML(){let a=[];if(V('fir')||V('fdate'))a.push('FIR No. '+E(V('fir')||'_____')+(V('fdate')?' dated '+E(V('fdate')):''));if(V('secs'))a.push('U/s '+E(V('secs')));if(V('ps'))a.push('PS '+E(V('ps')));return a.join(',<br>')}function counsel(){let p=V('counsel').split('|'),l=p[1]||'';if(duty.checked)l=l.replace(/\.?$/,'')+' (Duty).';return[p[0]||'',l]}function render(force=false){if(dirty&&!force)return;let co=counsel(),n=1,rows=C.filter(Boolean).map(c=>'<table class=para><tr><td>'+(n++)+')</td><td>'+E(c)+'</td></tr></table>').join('');paper.innerHTML='<div class=inner><div class=court>'+E(V('court'))+'</div><div class=stamp></div><table class=case><tr><td class=l>'+E(V('left')||'State')+'</td><td class=m>v/s</td><td class=r>'+E(V('right')||'Accused')+'</td></tr><tr><td></td><td></td><td class=fir>'+firHTML()+'</td></tr></table><div class=subject>'+E(V('subj')||subject())+'</div><div style="margin-bottom:14px">Respected Sir,</div><div style="margin-bottom:15px;text-indent:38px">It is submitted as follows:</div>'+rows+'<div class=prayer>'+E(V('pray')||prayer())+'</div><table class=sig><tr><td>Place: '+E(V('place')||'_____')+'<br>Date: '+E(V('date')||'_____')+'</td><td class=sr>Submitted By<br><br><br><span class=sn><b>'+E(label())+'</b><br>('+(plural()?'Accused/applicants':'Accused/applicant')+')</span></td></tr></table><div class=counsel>Through Counsel<br><br><br><b>'+E(co[0])+'</b><br>'+E(co[1])+'</div></div>';dirty=false}function view(x){document.body.classList.toggle('view-editor',x=='editor');document.body.classList.toggle('view-preview',x=='preview');te.classList.toggle('on',x=='editor');tp.classList.toggle('on',x=='preview');fit()}function fit(){document.documentElement.style.setProperty('--z',Math.min(1,Math.max(.34,(innerWidth-28)/816)))}function cmd(c,v){document.execCommand(c,false,v||null);dirty=true;paper.focus()}async function makePDF(){if(!window.jspdf||!window.html2canvas){alert('PDF engine loading');return}download.disabled=true;let old=paper.style.transform;paper.style.transform='none';await new Promise(r=>setTimeout(r,80));try{let can=await html2canvas(paper,{scale:3,backgroundColor:'#fff'}),pdf=new jspdf.jsPDF({unit:'in',format:'legal'}),pw=8.5,ph=14,pxh=Math.floor(can.width*ph/pw),pc=document.createElement('canvas'),ctx=pc.getContext('2d'),y=0,page=0;pc.width=can.width;pc.height=pxh;while(y<can.height){ctx.fillStyle='#fff';ctx.fillRect(0,0,pc.width,pc.height);ctx.drawImage(can,0,y,can.width,pxh,0,0,can.width,pxh);if(page)pdf.addPage('legal','portrait');pdf.addImage(pc.toDataURL('image/jpeg',.98),'JPEG',0,0,pw,ph);y+=pxh;page++}pdf.save('Application_'+label().replace(/[^a-z0-9]+/gi,'_')+'.pdf')}finally{paper.style.transform=old;download.disabled=false}}function state(){let f={};ids.forEach(id=>f[id]=$(id).type=='checkbox'?$(id).checked:$(id).value);return{format:'PdfWriterTemplate',fields:f,people:P,clauses:C,paper:paper.innerHTML,dirty}}function load(s){P=s.people||[{n:''}];C=s.clauses||[];drawP();drawC();Object.entries(s.fields||{}).forEach(([k,v])=>{if($(k)){if($(k).type=='checkbox')$(k).checked=!!v;else $(k).value=v}});if(s.paper){paper.innerHTML=s.paper;dirty=!!s.dirty}else render(true)}function exportT(){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(state(),null,2)],{type:'application/json'}));a.download='pdfwriter-template.pwt.json';a.click()}function importT(f){let r=new FileReader();r.onload=()=>load(JSON.parse(r.result));r.readAsText(f)}document.addEventListener('DOMContentLoaded',()=>{drawP();resetText();te.onclick=()=>view('editor');tp.onclick=()=>view('preview');prevBtn.onclick=()=>view('preview');opt.onclick=()=>tools.hidden=!tools.hidden;addP.onclick=()=>{P.push({n:''});drawP();resetText()};addC.onclick=()=>{C.push('');drawC();render()};reset.onclick=resetText;rebuild.onclick=()=>render(true);download.onclick=makePDF;pdf2.onclick=makePDF;edit.onclick=()=>{editMode=!editMode;paper.contentEditable=editMode;paper.classList.toggle('edit',editMode);view('preview');paper.focus()};color.onchange=e=>cmd('foreColor',e.target.value);document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>cmd(b.dataset.c));ids.forEach(id=>{$(id).oninput=()=>render();$(id).onchange=()=>render()});people.oninput=e=>{if(e.target.tagName=='INPUT'){P[+e.target.dataset.i].n=e.target.value;resetText()}};people.onclick=e=>{if(e.target.classList.contains('delP')){P.splice(+e.target.dataset.i,1);if(!P.length)P=[{n:''}];drawP();resetText()}};clauses.oninput=e=>{if(e.target.tagName=='TEXTAREA'){C[+e.target.dataset.i]=e.target.value;render()}};clauses.onclick=e=>{if(e.target.classList.contains('delC')){C.splice(+e.target.dataset.i,1);drawC();render()}};paper.oninput=()=>dirty=true;exT.onclick=exportT;imT.onclick=()=>file.click();file.onchange=e=>importT(e.target.files[0]);addEventListener('resize',fit);fit()})</script></body></html>`;
-export default{async fetch(req){let u=new URL(req.url);if(u.pathname==='/health')return Response.json({ok:true,app:'PdfWriter',version:'3.4.0'});if(u.pathname!=='/')return new Response('Not found',{status:404});return new Response(HTML,{headers:{'content-type':'text/html; charset=utf-8','cache-control':'public, max-age=120'}})}};
+import { CSS } from './styles.js';
+import { CLIENT_JS } from './client.js';
+
+const HTML = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b3d91">
+  <title>PdfWriter</title>
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body class="view-editor">
+  <header class="app-header">
+    <div class="brand-row">
+      <div class="emblem">PW</div>
+      <div>
+        <div class="brand-title">PdfWriter</div>
+        <div class="brand-subtitle">Exemption Application</div>
+      </div>
+    </div>
+    <div class="mobile-tabs">
+      <button id="tabEditor" class="active">Editor</button>
+      <button id="tabPreview">Preview</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section id="editorPanel" class="panel editor-panel">
+      <div class="desktop-brand">
+        <div class="brand-row">
+          <div class="emblem">PW</div>
+          <div>
+            <div class="brand-title">PdfWriter</div>
+            <div class="brand-subtitle">Professional Legal Drafting</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">
+          <h2>Court and Case Title</h2>
+          <button id="optionsButton" class="btn secondary">Options</button>
+        </div>
+        <label>Court name</label>
+        <select id="court" class="field">
+          <option value="IN THE COURT OF SH. DHARMINDER PAUL SINGLA, SESSIONS JUDGE, FAZILKA">Sh. Dharminder Paul Singla, Sessions Judge, Fazilka</option>
+          <option value="IN THE COURT OF SH. KRISHAN KUMAR SINGLA, ASJ, FAZILKA">Sh. Krishan Kumar Singla, ASJ, Fazilka</option>
+          <option value="IN THE COURT OF MRS. PAMELPREET GREWAL KAHAL, ASJ, FAZILKA">Mrs. Pamelpreet Grewal Kahal, ASJ, Fazilka</option>
+          <option value="IN THE COURT OF MRS. PAMELPREET GREWAL KAHAL, JUDGE, SPECIAL COURT, FAZILKA">Mrs. Pamelpreet Grewal Kahal, Special Court, Fazilka</option>
+          <option selected value="IN THE COURT OF SH. AJIT PAL SINGH, ASJ, FAZILKA">Sh. Ajit Pal Singh, ASJ, Fazilka</option>
+          <option value="IN THE COURT OF SH. ATUL KAMBOJ, ASJ, FAZILKA">Sh. Atul Kamboj, ASJ, Fazilka</option>
+          <option value="IN THE COURT OF SH. HARPREET SINGH, JMIC, FAZILKA">Sh. Harpreet Singh, JMIC, Fazilka</option>
+          <option value="IN THE COURT OF MS. KARAMWINDER KAUR, JMIC, FAZILKA">Ms. Karamwinder Kaur, JMIC, Fazilka</option>
+        </select>
+        <div class="grid two">
+          <div><label>Case title left</label><input id="caseLeft" class="field" placeholder="State / Complainant"></div>
+          <div><label>Case title right</label><input id="caseRight" class="field" placeholder="Accused / Respondent"></div>
+        </div>
+      </div>
+
+      <div id="templateTools" class="section hidden">
+        <div class="section-title"><h2>Template Tools</h2><span>.pwt.json</span></div>
+        <p class="hint">Saves all form fields, clauses, accused rows, duty status, and manual preview edits.</p>
+        <div class="wrap-actions">
+          <button id="exportTemplate" class="btn secondary">Export Template</button>
+          <button id="importTemplate" class="btn secondary">Import Template</button>
+          <button id="saveLocal" class="btn secondary">Save Draft</button>
+          <button id="loadLocal" class="btn secondary">Load Draft</button>
+          <input id="templateFile" type="file" accept=".json,.pwt.json,application/json" hidden>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>FIR Details</h2><span>Optional</span></div>
+        <div class="grid two">
+          <div><label>FIR number</label><input id="fir" class="field" placeholder="FIR No."></div>
+          <div><label>FIR date</label><input id="firDate" class="field" placeholder="DD.MM.YYYY"></div>
+          <div><label>Sections</label><input id="sections" class="field" placeholder="Sections / Act"></div>
+          <div><label>Police Station</label><input id="policeStation" class="field" placeholder="Police Station"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Absent Accused / Applicants</h2><button id="addPerson" class="btn secondary">Add Person</button></div>
+        <div id="peopleBox" class="stack"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Application Text</h2><button id="resetText" class="btn secondary">Reset Text</button></div>
+        <label>Subject</label><textarea id="subject" class="field area"></textarea>
+        <label>Prayer</label><textarea id="prayer" class="field area"></textarea>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Factual Statements</h2><button id="addClause" class="btn secondary">Add Clause</button></div>
+        <div id="clauseBox" class="stack"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Filing and Counsel</h2></div>
+        <div class="grid two">
+          <div><label>Place</label><input id="place" class="field" placeholder="Place"></div>
+          <div><label>Date</label><input id="date" class="field" placeholder="DD.MM.YYYY"></div>
+        </div>
+        <label>Through Counsel</label>
+        <select id="counsel" class="field">
+          <option value="Baltej Singh Brar, Advocate|Chief, LADC, Fazilka.">Baltej Singh Brar - Chief</option>
+          <option value="Hardeep Singh Dhaliwal, Advocate|Deputy Chief, LADC, Fazilka.">Hardeep Singh Dhaliwal - Deputy Chief</option>
+          <option value="Sunil Rangbulla, Advocate|Deputy Chief, LADC, Fazilka.">Sunil Rangbulla - Deputy Chief</option>
+          <option value="Rajvinder Kaur, Advocate|Assistant, LADC, Fazilka.">Rajvinder Kaur - Assistant</option>
+          <option value="Amisha, Advocate|Assistant, LADC, Fazilka.">Amisha - Assistant</option>
+          <option selected value="Naazpreet Kaur, Advocate|Assistant, LADC, Fazilka.">Naazpreet Kaur - Assistant</option>
+        </select>
+        <label class="checkbox-line"><input id="duty" type="checkbox"> Add (Duty) after counsel designation</label>
+      </div>
+
+      <div class="sticky-actions">
+        <button id="downloadPdf" class="btn primary">Download PDF</button>
+        <button id="previewButton" class="btn secondary">Preview</button>
+        <button id="rebuildPreview" class="btn secondary">Rebuild Preview</button>
+      </div>
+    </section>
+
+    <section id="previewPanel" class="panel preview-panel">
+      <div class="preview-top">
+        <div><strong>Legal-size Preview</strong><span id="statusText">Ready</span></div>
+        <div class="preview-actions">
+          <button id="fitZoom" class="btn secondary">Fit</button>
+          <button id="zoomOut" class="btn secondary">−</button>
+          <button id="zoomIn" class="btn secondary">+</button>
+          <button id="previewPdf" class="btn primary">PDF</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button id="editToggle" class="tool">✎ Edit</button>
+        <button class="tool" data-command="bold"><b>B</b></button>
+        <button class="tool" data-command="italic"><i>I</i></button>
+        <button class="tool" data-command="underline"><u>U</u></button>
+        <button class="tool" data-command="strikeThrough">S</button>
+        <button class="tool" data-command="insertUnorderedList">• List</button>
+        <button class="tool" data-command="insertOrderedList">1. List</button>
+        <button class="tool" data-command="justifyLeft">Left</button>
+        <button class="tool" data-command="justifyCenter">Center</button>
+        <button class="tool" data-command="justifyRight">Right</button>
+        <button class="tool" data-command="justifyFull">Justify</button>
+        <button class="tool" data-command="undo">Undo</button>
+        <button class="tool" data-command="redo">Redo</button>
+        <select class="tool-select" data-command-value="fontName">
+          <option value="Times New Roman">Times</option>
+          <option value="Arial">Arial</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Courier New">Courier</option>
+        </select>
+        <select class="tool-select" data-command-value="fontSize">
+          <option value="2">Small</option>
+          <option selected value="3">Normal</option>
+          <option value="4">Large</option>
+          <option value="5">XL</option>
+        </select>
+        <input id="textColor" class="color" type="color" title="Text color">
+        <input id="highlightColor" class="color" type="color" value="#ffff00" title="Highlight">
+        <button id="pageBreak" class="tool">Page Break</button>
+        <button id="signatureLine" class="tool">Sign Line</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Markdown / Find Replace</h2><span>Advanced tools</span></div>
+        <textarea id="markdownText" class="field area" placeholder="Markdown: **bold**, *italic*, new paragraphs..."></textarea>
+        <div class="wrap-actions" style="margin-top:8px">
+          <button id="applyMarkdown" class="btn secondary">Insert Markdown</button>
+          <button id="replaceMarkdown" class="btn secondary">Replace Document</button>
+        </div>
+        <div class="grid two" style="margin-top:8px">
+          <input id="findText" class="field" placeholder="Find text">
+          <input id="replaceText" class="field" placeholder="Replace with">
+        </div>
+        <button id="findReplace" class="btn secondary" style="margin-top:8px">Find and Replace</button>
+      </div>
+
+      <div class="preview-scroll">
+        <div class="paper-stage"><div id="paper" class="paper"></div></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>`;
+
+function textResponse(body, type) {
+  return new Response(body, {
+    headers: {
+      'content-type': type,
+      'cache-control': 'public, max-age=120',
+      'x-content-type-options': 'nosniff',
+      'referrer-policy': 'strict-origin-when-cross-origin'
+    }
+  });
+}
+
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+    if (url.pathname === '/health') return Response.json({ ok: true, app: 'PdfWriter', version: '3.5.0' });
+    if (url.pathname === '/style.css') return textResponse(CSS, 'text/css; charset=utf-8');
+    if (url.pathname === '/app.js') return textResponse(CLIENT_JS, 'application/javascript; charset=utf-8');
+    if (url.pathname === '/') return textResponse(HTML, 'text/html; charset=utf-8');
+    return new Response('Not found', { status: 404, headers: { 'content-type': 'text/plain; charset=utf-8' } });
+  }
+};
