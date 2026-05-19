@@ -333,14 +333,14 @@ export default {
             }
 
             return '' +
-                /* Top margin significantly reduced (0.7in) so it starts at the top, not centralized */
-                '<div style="padding: 0.7in 1in 0.8in 1.25in; font-family: \\'Times New Roman\\', Times, serif; font-size: 13pt; color: black; line-height: 1.45;">' +
+                /* Top margin reduced to 0.7in, and bottom reduced to 0.5in to compensate for the massive stamp space */
+                '<div style="padding: 0.7in 1in 0.5in 1.25in; font-family: \\'Times New Roman\\', Times, serif; font-size: 13pt; color: black; line-height: 1.45;">' +
                     
                     /* Court Title */
-                    '<div style="text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 5px; line-height: 1.3;">' + v('courtSelect') + '</div>' +
+                    '<div style="text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 0px; line-height: 1.3;">' + v('courtSelect') + '</div>' +
                     
-                    /* EXPLICIT TICKET SPACE - 75px gap specifically reserved for Court Fee Tickets */
-                    '<div style="height: 75px; width: 100%;"></div>' +
+                    /* MASSIVE TICKET SPACE - 130px (~1.35 inches) gap specifically reserved for Court Fee Tickets */
+                    '<div style="height: 130px; width: 100%;"></div>' +
 
                     '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">' +
                         '<tr>' +
@@ -350,7 +350,8 @@ export default {
                         '</tr>' +
                         '<tr>' +
                             '<td></td><td></td>' +
-                            '<td style="padding-top: 15px; line-height: 1.4;">' +
+                            /* Compact FIR Block: line-height reduced to 1.2 to perfectly match your Word document photo */
+                            '<td style="padding-top: 15px; line-height: 1.2;">' +
                                 'FIR No. ' + v('firNumber') + ' dated ' + v('firDate') + ',<br>' +
                                 'U/s ' + v('lawSections') + ',<br>' +
                                 'PS ' + v('policeStation') +
@@ -358,7 +359,7 @@ export default {
                         '</tr>' +
                     '</table>' +
                     
-                    '<div style="font-weight: bold; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 25px; text-align: justify;">' + v('appSubject') + '</div>' +
+                    '<div style="font-weight: bold; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 20px; text-align: justify;">' + v('appSubject') + '</div>' +
                     '<div style="margin-bottom: 15px;">Respected Sir,</div>' +
                     '<div style="margin-bottom: 15px; text-indent: 40px;">It is submitted as follows:</div>' +
                     
