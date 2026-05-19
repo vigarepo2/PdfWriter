@@ -333,8 +333,15 @@ export default {
             }
 
             return '' +
-                '<div style="padding: 1.1in 1in 0.8in 1.25in; font-family: \\'Times New Roman\\', Times, serif; font-size: 13pt; color: black; line-height: 1.45;">' +
-                    '<div style="text-align: center; font-weight: bold; font-size: 13pt; text-transform: uppercase; margin-bottom: 30px; line-height: 1.3;">' + v('courtSelect') + '</div>' +
+                /* Top margin significantly reduced (0.7in) so it starts at the top, not centralized */
+                '<div style="padding: 0.7in 1in 0.8in 1.25in; font-family: \\'Times New Roman\\', Times, serif; font-size: 13pt; color: black; line-height: 1.45;">' +
+                    
+                    /* Court Title */
+                    '<div style="text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 5px; line-height: 1.3;">' + v('courtSelect') + '</div>' +
+                    
+                    /* EXPLICIT TICKET SPACE - 75px gap specifically reserved for Court Fee Tickets */
+                    '<div style="height: 75px; width: 100%;"></div>' +
+
                     '<table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">' +
                         '<tr>' +
                             '<td style="width: 25%; font-weight: bold; vertical-align: top;">' + v('partyOne') + '</td>' +
@@ -350,11 +357,15 @@ export default {
                             '</td>' +
                         '</tr>' +
                     '</table>' +
+                    
                     '<div style="font-weight: bold; text-decoration: underline; text-underline-offset: 4px; margin-bottom: 25px; text-align: justify;">' + v('appSubject') + '</div>' +
                     '<div style="margin-bottom: 15px;">Respected Sir,</div>' +
                     '<div style="margin-bottom: 15px; text-indent: 40px;">It is submitted as follows:</div>' +
+                    
                     '<div>' + parHTML + '</div>' +
+                    
                     '<div style="margin-top: 20px; margin-bottom: 35px; text-indent: 40px; text-align: justify;">' + v('prayerText') + '</div>' +
+                    
                     '<table style="width: 100%; margin-top: 20px;">' +
                         '<tr>' +
                             '<td style="vertical-align: bottom;">Place: ' + v('filingPlace') + '<br>Date: ' + v('filingDate') + '</td>' +
@@ -365,6 +376,7 @@ export default {
                             '</td>' +
                         '</tr>' +
                     '</table>' +
+                    
                     '<div style="text-align: center; margin-top: 35px; width: 50%; margin-left: auto;">' +
                         'Through Counsel<br><br><br>' +
                         '<span style="font-weight: bold;">' + counsel[0] + '</span><br>' + counsel[1] +
