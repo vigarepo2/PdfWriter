@@ -1,7 +1,6 @@
 name = "pdfwriter"
 main = "src/index.js"
 compatibility_date = "2026-05-19"
-compatibility_flags = ["nodejs_compat"]
 
 [vars]
-APP_VERSION = "4.0.0"
+APP_VERSION = "5.0.0"
