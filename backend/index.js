@@ -18,14 +18,13 @@ export function appHtml() {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#1a1a2e">
-  <meta name="description" content="PDFWriter Legal — Professional Exemption Application Generator for LADC Fazilka">
+  <meta name="description" content="PDFWriter Legal - Professional Exemption Application Generator for LADC Fazilka">
   <meta name="robots" content="noindex,nofollow">
   <title>PDFWriter Legal | Exemption Application Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Critical above-fold CSS to prevent FOUC */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:#f0f2f5}
     #app{min-height:100dvh;display:flex;flex-direction:column}
