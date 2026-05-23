@@ -15,6 +15,6 @@ export default {
     if (path === '/')
       return response(appHtml());
 
-    return response('404 — Not Found', 'text/plain; charset=utf-8', 404);
+    return response('404 Not Found', 'text/plain; charset=utf-8', 404);
   }
 };
