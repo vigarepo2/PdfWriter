@@ -1,1 +1,18 @@
-{"name":"pdfwriter","version":"4.0.0","description":"Professional exemption application PDF generator.","private":true,"type":"module","scripts":{"check":"node --check src/index.js && node --check backend/index.js && node --check frontend/index.js","dev":"wrangler dev","deploy":"wrangler deploy"},"devDependencies":{"wrangler":"^3.0.0"},"engines":{"node":">=20"}}
+{
+  "name": "pdfwriter",
+  "version": "4.0.0",
+  "description": "Premium Cloudflare Workers legal exemption PDF generator.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/index.js && node --check backend/index.js && node --check frontend/index.js",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
